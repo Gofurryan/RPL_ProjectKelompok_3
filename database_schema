@@ -28,72 +28,41 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `items` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `status` enum('Available','Borrowed','Damaged') DEFAULT 'Available',
-  `location` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `category` enum('Elektronik','Furniture','Perlengkapan Ibadah','Sarana Umum') NOT NULL,
+  `status` enum('available','borrowed','damaged') DEFAULT 'available',
+  `condition` text DEFAULT NULL,
+  `image_url` varchar(255) DEFAULT 'default_item.png',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`id`, `name`, `status`, `location`) VALUES
-(1, 'Proyektor LCD Epson', 'Available', 'Ruang Sekretariat'),
-(2, 'Sound System Portable', 'Available', 'Gudang Utama'),
-(3, 'Tenda Lipat 3x3', 'Borrowed', 'Halaman Samping'),
-(4, 'Kursi Chitose (50 Unit)', 'Available', 'Aula Bawah'),
-(5, 'Generator Listrik', 'Damaged', 'Area Parkir Belakang'),
-(6, 'Vacuum Cleaner Sharp', 'Available', 'Gudang Alat Kebersihan'),
-(7, 'Mic Wireless Shure (Set)', 'Available', 'Ruang Operator'),
-(8, 'Mixer Audio Yamaha 16-Ch', 'Available', 'Ruang Operator'),
-(9, 'Karpet Sajadah Turki (Roll 1)', 'Available', 'Ruang Utama'),
-(10, 'Karpet Sajadah Turki (Roll 2)', 'Available', 'Ruang Utama'),
-(11, 'Dispenser Modena', 'Available', 'Area Dapur'),
-(12, 'Galon Aqua (Cadangan)', 'Available', 'Area Dapur'),
-(13, 'Kipas Angin Dinding GMC', 'Available', 'Serambi Kiri'),
-(14, 'Kipas Angin Dinding GMC', 'Available', 'Serambi Kanan'),
-(15, 'Tangga Lipat Aluminium 3m', 'Available', 'Gudang Umum'),
-(16, 'Bor Listrik Makita', 'Available', 'Gudang Umum'),
-(17, 'Set Obeng & Kunci Pas', 'Available', 'Gudang Umum'),
-(18, 'Speaker Aktif Huper', 'Available', 'Ruang Utama'),
-(19, 'Lampu Sorot Panggung', 'Available', 'Gudang Umum'),
-(20, 'Meja Lipat Kayu', 'Available', 'Aula Bawah'),
-(21, 'Meja Lipat Kayu', 'Available', 'Aula Bawah'),
-(22, 'Papan Tulis Whiteboard', 'Available', 'Ruang Kelas 1'),
-(23, 'Proyektor BenQ', 'Available', 'Ruang Kelas 1'),
-(24, 'Kabel Roll 10m', 'Available', 'Gudang Umum'),
-(25, 'Kabel Roll 20m', 'Available', 'Gudang Umum'),
-(26, 'Termos Air Besar', 'Available', 'Area Dapur'),
-(27, 'Nampan Plastik (Isi 10)', 'Available', 'Area Dapur'),
-(28, 'Piring Keramik (Isi 24)', 'Available', 'Area Dapur'),
-(29, 'Gelas Kaca (Isi 24)', 'Available', 'Area Dapur'),
-(30, 'Mimbar Kayu Jati', 'Available', 'Ruang Utama'),
-(31, 'Al-Quran Terjemah (Isi 50)', 'Available', 'Rak Buku Utama'),
-(32, 'Buku Yasin (Isi 100)', 'Available', 'Rak Buku Utama'),
-(33, 'Mukena Putih (Isi 10)', 'Available', 'Area Wanita'),
-(34, 'Sarung Wadimor (Isi 10)', 'Available', 'Area Pria'),
-(35, 'Tempat Sandal Kayu', 'Available', 'Area Parkir'),
-(36, 'Kotak Amal Dorong', 'Available', 'Ruang Utama'),
-(37, 'Kotak Amal Dinding', 'Available', 'Pintu Masuk'),
-(38, 'AC Split Daikin 2PK', 'Available', 'Ruang Utama'),
-(39, 'CCTV Hikvision (Outdoor)', 'Available', 'Area Parkir'),
-(40, 'CCTV Hikvision (Indoor)', 'Available', 'Ruang Utama'),
-(41, 'Jam Digital Waktu Sholat', 'Available', 'Ruang Utama'),
-(42, 'Alat Pel Lantai (Set)', 'Available', 'Gudang Kebersihan'),
-(43, 'Sapu Lantai (Isi 5)', 'Available', 'Gudang Kebersihan'),
-(44, 'Tempat Sampah Besar', 'Available', 'Area Luar'),
-(45, 'Payung Besar (Isi 5)', 'Available', 'Pintu Masuk'),
-(46, 'Sound Card Focusrite', 'Available', 'Ruang Operator'),
-(47, 'Komputer PC Admin', 'Available', 'Sekretariat'),
-(48, 'Printer Epson L3110', 'Available', 'Sekretariat'),
-(49, 'Kursi Kantor Chitose', 'Available', 'Sekretariat'),
-(50, 'Lemari Arsip Besi', 'Available', 'Sekretariat'),
-(51, 'Brankas Kecil', 'Available', 'Sekretariat'),
-(52, 'Gitar Akustik (Youth)', 'Available', 'Ruang Musik'),
-(53, 'Keyboard Yamaha PSR', 'Available', 'Ruang Musik'),
-(54, 'Kamera DSLR Canon', 'Available', 'Dokumentasi'),
-(55, 'Tripod Takara', 'Available', 'Dokumentasi');
+INSERT INTO `items` (`name`, `category`, `status`, `condition`) VALUES
+('Mic Wireless Sony A1', 'Elektronik', 'available', 'good'),
+('Speaker Portable JBL', 'Elektronik', 'available', 'good'),
+('Proyektor Epson EB-X400', 'Elektronik', 'available', 'good'),
+('Kabel Roll 10 Meter', 'Elektronik', 'available', 'good'),
+('Genset Honda EU22i', 'Elektronik', 'available', 'good'),
+('Vacuum Cleaner Sharp', 'Alat Kebersihan', 'available', 'good'),
+('Karpet Sajadah Imam', 'Perlengkapan Ibadah', 'available', 'good'),
+('Mukena Inventaris Putih', 'Perlengkapan Ibadah', 'available', 'good'),
+('Al-Qur\'an Madinah (Set 10)', 'Perlengkapan Ibadah', 'available', 'good'),
+('Rehal Kayu Jati (Set 5)', 'Perlengkapan Ibadah', 'available', 'good'),
+('Kursi Lipat Chitose', 'Furniture', 'available', 'good'),
+('Meja Lesehan Kayu', 'Furniture', 'available', 'good'),
+('Tenda Lipat 3x3m', 'Sarana Umum', 'available', 'good'),
+('Termos Air Panas 10L', 'Sarana Umum', 'available', 'good'),
+('Tangga Lipat Aluminium', 'Sarana Umum', 'available', 'good'),
+('Sound System Mixer Yamaha', 'Elektronik', 'borrowed', 'good'),
+('Sajadah Panjang (Shaf)', 'Perlengkapan Ibadah', 'available', 'good'),
+('Papan Tulis Whiteboard', 'Sarana Umum', 'available', 'good'),
+('Kipas Angin Berdiri', 'Elektronik', 'available', 'fair'),
+('Kotak Infaq Stainless', 'Sarana Umum', 'available', 'good');
+
 
 -- --------------------------------------------------------
 
