@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
-    use HasFactory;
-
-    public $timestamps = false; 
+    use HasFactory; 
 
     protected $fillable = [
         'name',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,8 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+    // Tambahkan untuk rute CRUD Barang:
+    Route::resource('admin/items', ItemController::class);
 });
 
 
