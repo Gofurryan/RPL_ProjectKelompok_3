@@ -17,6 +17,7 @@ return new class extends Migration
         $table->string('name');
         $table->enum('category', ['Elektronik', 'Furniture', 'Perlengkapan Ibadah', 'Sarana Umum']);
         $table->enum('status', ['Available', 'Borrowed', 'Maintenance', 'Damaged'])->default('Available');
+        $table->string('condition')->nullable()->default('good');
         $table->string('location')->nullable();
         $table->string('image_url')->default('default_item.png');
         $table->timestamps();

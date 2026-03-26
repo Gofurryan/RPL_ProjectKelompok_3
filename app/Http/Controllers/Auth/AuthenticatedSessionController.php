@@ -29,11 +29,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if ($request->user()->role === 'Admin') {
-            return redirect()->route('admin.dashboard');
+        // Ganti 'Admin' menjadi 'petugas' (atau ketua_takmir jika disamakan haknya)
+        if ($request->user()->role === 'petugas' || $request->user()->role === 'ketua_takmir') {
+            return redirect()->intended(route('admin.dashboard'));
         }
 
-        return redirect()->route('warga.dashboard');
+        return redirect()->intended(route('warga.dashboard'));
     }
 
     /**

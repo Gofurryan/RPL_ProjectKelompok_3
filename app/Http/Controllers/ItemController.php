@@ -34,15 +34,15 @@ class ItemController extends Controller
     {
         // 1. Validasi inputan agar tidak ada data kosong/ngawur
         $request->validate([
+            'item_code' => 'required|string|unique:items,item_code',
             'name' => 'required|string|max:255',
-            'status' => 'required|in:Available,Damaged,Borrowed',
+            'category' => 'required|in:Elektronik,Furniture,Perlengkapan Ibadah,Sarana Umum',
+            'status' => 'required|in:Available,Borrowed,Maintenance,Damaged',
+            'location' => 'nullable|string|max:255',
         ]);
 
         // 2. Simpan ke database
-        Item::create([
-            'name' => $request->name,
-            'status' => $request->status,
-        ]);
+        Item::create($request->all()); // Cara cepat menyimpan semua data
 
         // 3. Kembalikan Admin ke halaman daftar barang
         return redirect()->route('items.index');
@@ -71,16 +71,16 @@ class ItemController extends Controller
     {
         // 1. Validasi inputan baru
         $request->validate([
+            // Pengecualian unique agar bisa update tanpa harus ganti item_code
+            'item_code' => 'required|string|unique:items,item_code,' . $item->id, 
             'name' => 'required|string|max:255',
-            // Pastikan menggunakan kata bahasa Inggris yang sesuai dengan DB-mu seperti sebelumnya
-            'status' => 'required|in:Available,Damaged', 
+            'category' => 'required|in:Elektronik,Furniture,Perlengkapan Ibadah,Sarana Umum',
+            'status' => 'required|in:Available,Borrowed,Maintenance,Damaged',
+            'location' => 'nullable|string|max:255',
         ]);
 
-        // 2. Simpan perubahan ke database
-        $item->update([
-            'name' => $request->name,
-            'status' => $request->status,
-        ]);
+         // 2. Simpan perubahan ke database
+        $item->update($request->all());
 
         // 3. Kembali ke daftar barang
         return redirect()->route('items.index');

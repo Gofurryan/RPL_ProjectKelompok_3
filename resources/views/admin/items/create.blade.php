@@ -17,6 +17,16 @@
                         </div>
 
                         <div class="mb-4">
+                            <label for="category" class="block text-sm font-medium text-gray-700">Kategori Barang</label>
+                            <select name="category" id="category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="Elektronik">Elektronik</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Perlengkapan Ibadah">Perlengkapan Ibadah</option>
+                                <option value="Sarana Umum">Sarana Umum</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
                             <label for="status" class="block text-sm font-medium text-gray-700">Status Awal</label>
                             <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                                 <option value="Available">Tersedia</option>
@@ -31,6 +41,15 @@
                             <x-primary-button>
                                 {{ __('Simpan Barang') }}
                             </x-primary-button>
+                        </div>
+
+                        <div class="mb-6">
+                            <label for="condition" class="block text-sm font-medium text-gray-700">Kondisi Fisik</label>
+                            <select name="condition" id="condition" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="good">Baik</option>
+                                <option value="fair">Layak (Ada Minus Sedikit)</option>
+                                <option value="poor">Buruk (Perlu Perbaikan)</option>
+                            </select>
                         </div>
                     </form>
 

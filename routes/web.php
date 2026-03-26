@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 // --- 1. TRAFFIC CONTROLLER (Pencegat agar tidak 404) ---
 Route::get('/dashboard', function () {
-    if (auth()->user()->role === 'Admin') {
+    if (auth()->user()->role === 'petugas' || auth()->user()->role === 'ketua_takmir') {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('warga.dashboard');
@@ -29,7 +29,7 @@ Route::get('/dashboard', function () {
 
 
 // --- 2. RUTE KHUSUS ADMIN ---
-Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
 
 
 // --- 3. RUTE KHUSUS WARGA ---
-Route::middleware(['auth', 'verified', 'role:Warga'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
     Route::get('/warga/dashboard', function () {
         return view('warga.dashboard');
     })->name('warga.dashboard');

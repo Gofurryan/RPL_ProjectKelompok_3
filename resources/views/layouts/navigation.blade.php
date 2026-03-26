@@ -13,14 +13,14 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    {{ __('Dashboard') }}
+                </x-nav-link>
 
-                    @if (auth()->user()->role === 'Admin')
-                        <x-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')">
-                            {{ __('Kelola Inventaris') }}
-                        </x-nav-link>
-                    @endif
+                @if (auth()->user()->role === 'petugas' || auth()->user()->role === 'ketua_takmir')
+                    <x-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')">
+                        {{ __('Kelola Inventaris') }}
+                    </x-nav-link>
+                @endif
                 </div>
             </div>
 
