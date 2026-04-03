@@ -28,21 +28,39 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-// --- 2. RUTE KHUSUS ADMIN ---
+// --- 2. RUTE KHUSUS PETUGAS/ADMIN ---
 Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
-    // Tambahkan untuk rute CRUD Barang:
+    
+    // Kelola Barang
     Route::resource('admin/items', ItemController::class);
+
+    // Kelola Peminjaman (Booking)
+    Route::get('/admin/loans', [\App\Http\Controllers\LoanController::class, 'adminIndex'])->name('admin.loans.index');
+    Route::put('/admin/loans/{id}/approve', [\App\Http\Controllers\LoanController::class, 'approve'])->name('admin.loans.approve');
+    Route::put('/admin/loans/{id}/reject', [\App\Http\Controllers\LoanController::class, 'reject'])->name('admin.loans.reject');
 });
 
 
 // --- 3. RUTE KHUSUS WARGA ---
 Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
+    
+    // Halaman Dashboard & Form Booking
     Route::get('/warga/dashboard', function () {
-        return view('warga.dashboard');
+        // Ambil semua barang yang tidak rusak/maintenance
+        $items = \App\Models\Item::whereIn('status', ['Available', 'Borrowed'])->get();
+        
+        // Ambil riwayat peminjaman milik warga ini saja
+        $myLoans = \App\Models\Loan::where('user_id', auth()->id())->latest()->get();
+        
+        return view('warga.dashboard', compact('items', 'myLoans')); 
     })->name('warga.dashboard');
+
+    // Rute Submit Form Booking (Mengarah ke LoanController yang tadi kita buat)
+    Route::post('/warga/booking', [\App\Http\Controllers\LoanController::class, 'store'])->name('warga.booking.store');
+    
 });
 
 

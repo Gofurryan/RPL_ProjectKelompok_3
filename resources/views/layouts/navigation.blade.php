@@ -20,6 +20,9 @@
                     <x-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')">
                         {{ __('Kelola Inventaris') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
+                        {{ __('Kelola Peminjaman') }}
+                    </x-nav-link>
                 @endif
                 </div>
             </div>
@@ -77,11 +80,16 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @if (auth()->user()->role === 'Admin')
+            @if (auth()->user()->role === 'petugas' || auth()->user()->role === 'ketua_takmir')
                 <x-responsive-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')">
                     {{ __('Kelola Inventaris') }}
                 </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
+                    {{ __('Kelola Peminjaman') }}
+                </x-responsive-nav-link>
             @endif
+
         </div>
 
         <!-- Responsive Settings Options -->

@@ -9,8 +9,6 @@ class Loan extends Model
 {
     use HasFactory;
 
-    public $timestamps = false; 
-
     protected $fillable = [
         'user_id',
         'item_id',
@@ -19,4 +17,14 @@ class Loan extends Model
         'return_date',
         'status',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function item()
+    {
+        return $this->belongsTo(Item::class);
+    }
 }
