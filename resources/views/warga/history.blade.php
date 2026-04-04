@@ -27,16 +27,28 @@
                                         <td class="py-3 px-4">{{ \Carbon\Carbon::parse($loan->loan_date)->format('d M Y, H:i') }}</td>
                                         <td class="py-3 px-4">{{ \Carbon\Carbon::parse($loan->due_date)->format('d M Y, H:i') }}</td>
                                         <td class="py-3 px-4 text-center">
-                                            @if($loan->status == 'Pending')
-                                                <span class="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Menunggu</span>
-                                            @elseif($loan->status == 'Approved')
-                                                <span class="bg-blue-100 text-blue-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Disetujui</span>
-                                            @elseif($loan->status == 'Active')
-                                                <span class="bg-green-100 text-green-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Dibawa</span>
-                                            @else
-                                                <span class="bg-gray-100 text-gray-800 py-1 px-3 rounded-md text-xs font-bold uppercase">{{ $loan->status }}</span>
-                                            @endif
-                                        </td>
+    @if($loan->status == 'Pending')
+        <span class="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Menunggu</span>
+        
+    @elseif($loan->status == 'Approved')
+        <span class="bg-blue-100 text-blue-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Disetujui</span>
+        
+    @elseif($loan->status == 'Active')
+        <span class="bg-indigo-100 text-indigo-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Sedang Dipinjam</span>
+        
+    @elseif($loan->status == 'Returned')
+        <span class="bg-green-100 text-green-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Dikembalikan</span>
+        
+    @elseif($loan->status == 'Rejected')
+        <span class="bg-red-100 text-red-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Ditolak</span>
+        
+    @elseif($loan->status == 'Overdue')
+        <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-md text-xs font-bold uppercase">Terlambat</span>
+        
+    @else
+        <span class="bg-gray-100 text-gray-800 py-1 px-3 rounded-md text-xs font-bold uppercase">{{ $loan->status }}</span>
+    @endif
+</td>
                                     </tr>
                                 @empty
                                     <tr>

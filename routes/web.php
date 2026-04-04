@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::put('/admin/loans/{id}/approve', [\App\Http\Controllers\LoanController::class, 'approve'])->name('admin.loans.approve');
     Route::put('/admin/loans/{id}/reject', [\App\Http\Controllers\LoanController::class, 'reject'])->name('admin.loans.reject');
     Route::put('/admin/loans/{id}/return', [\App\Http\Controllers\LoanController::class, 'returnItem'])->name('admin.loans.return');
+    Route::put('/admin/loans/{id}/handover', [\App\Http\Controllers\LoanController::class, 'handover'])->name('admin.loans.handover');
+    Route::put('/admin/penalties/{id}/pay', [\App\Http\Controllers\LoanController::class, 'payPenalty'])->name('admin.penalties.pay');
 });
 
 

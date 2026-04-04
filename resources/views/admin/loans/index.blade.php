@@ -62,7 +62,12 @@
                                                 <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Tolak peminjaman ini?');">Tolak</button>
                                             </form>
                                         </div>
-                                        @elseif($loan->status == 'Approved' || $loan->status == 'Active')
+                                        @elseif($loan->status == 'Approved')
+                                            <form action="{{ route('admin.loans.handover', $loan->id) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Konfirmasi barang diserahkan ke warga?');">Serahkan Barang</button>
+                                            </form>
+                                        @elseif($loan->status == 'Active')
                                             <form action="{{ route('admin.loans.return', $loan->id) }}" method="POST">
                                                 @csrf @method('PUT')
                                                 <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Konfirmasi barang telah dikembalikan fisik?');">Terima Pengembalian</button>
@@ -70,7 +75,20 @@
                                             
                                         @elseif($loan->status == 'Returned')
                                             @if($loan->penalty)
-                                                <span class="text-red-600 font-bold text-xs">Denda: Rp {{ number_format($loan->penalty->amount, 0, ',', '.') }}</span>
+                                                <div class="flex flex-col items-center space-y-2">
+                                                    <span class="text-red-600 font-bold text-xs">Denda: Rp {{ number_format($loan->penalty->amount, 0, ',', '.') }}</span>
+                                                    
+                                                    @if($loan->penalty->payment_status == 'Unpaid')
+                                                        <span class="bg-red-100 text-red-800 py-1 px-2 rounded-full text-[10px] font-bold uppercase">Belum Lunas</span>
+                                                        
+                                                        <form action="{{ route('admin.penalties.pay', $loan->penalty->id) }}" method="POST">
+                                                            @csrf @method('PUT')
+                                                            <button type="submit" class="bg-gray-800 hover:bg-black text-white font-bold py-1 px-3 rounded text-xs mt-1" onclick="return confirm('Konfirmasi bahwa warga telah membayar denda?');">Lunasi Denda</button>
+                                                        </form>
+                                                    @else
+                                                        <span class="bg-green-100 text-green-800 py-1 px-2 rounded-full text-[10px] font-bold uppercase">Lunas</span>
+                                                    @endif
+                                                </div>
                                             @else
                                                 <span class="text-green-600 font-bold text-xs">Selesai (Tepat Waktu)</span>
                                             @endif

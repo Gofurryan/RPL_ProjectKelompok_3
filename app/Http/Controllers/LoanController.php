@@ -93,6 +93,17 @@ class LoanController extends Controller
         return redirect()->back()->with('success', 'Pengajuan peminjaman disetujui. Barang otomatis Dipinjam.');
     }
 
+    // Fungsi baru: Menyerahkan barang fisik ke warga
+    public function handover($id)
+    {
+        $loan = Loan::findOrFail($id);
+        
+        // Ubah status peminjaman menjadi Active (Sedang Dipinjam)
+        $loan->update(['status' => 'Active']);
+
+        return redirect()->back()->with('success', 'Barang telah diserahkan secara fisik. Status berubah menjadi Sedang Dipinjam.');
+    }
+
     // 3. Menolak peminjaman
     public function reject($id)
     {
@@ -142,5 +153,17 @@ class LoanController extends Controller
         }
 
         return redirect()->back()->with('success', $pesan);
+    }
+
+    // Fungsi baru: Konfirmasi pembayaran denda oleh warga
+    public function payPenalty($id)
+    {
+        // Cari data denda berdasarkan ID-nya
+        $penalty = \App\Models\Penalty::findOrFail($id);
+        
+        // Ubah status menjadi Paid (Lunas)
+        $penalty->update(['payment_status' => 'Paid']);
+
+        return redirect()->back()->with('success', 'Pembayaran denda berhasil dikonfirmasi. Status berubah menjadi Lunas.');
     }
 }
