@@ -24,6 +24,14 @@
                         {{ __('Kelola Peminjaman') }}
                     </x-nav-link>
                 @endif
+                @if (auth()->user()->role === 'warga')
+                    <x-nav-link :href="route('warga.booking.create')" :active="request()->routeIs('warga.booking.*')">
+                        {{ __('Peminjaman') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('warga.history')" :active="request()->routeIs('warga.history')">
+                        {{ __('Riwayat') }}
+                    </x-nav-link>
+                @endif
                 </div>
             </div>
 
@@ -88,6 +96,16 @@
                 <x-responsive-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
                     {{ __('Kelola Peminjaman') }}
                 </x-responsive-nav-link>
+            @endif
+
+            @if (auth()->user()->role === 'warga')
+                <x-responsive-nav-link :href="route('warga.booking.create')" :active="request()->routeIs('warga.booking.*')">
+                    {{ __('Peminjaman') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('warga.history')" :active="request()->routeIs('warga.history')">
+                    {{ __('Riwayat') }}
+                </x-responsive-nav-link>    
             @endif
 
         </div>

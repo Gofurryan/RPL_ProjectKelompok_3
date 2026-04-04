@@ -41,26 +41,24 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::get('/admin/loans', [\App\Http\Controllers\LoanController::class, 'adminIndex'])->name('admin.loans.index');
     Route::put('/admin/loans/{id}/approve', [\App\Http\Controllers\LoanController::class, 'approve'])->name('admin.loans.approve');
     Route::put('/admin/loans/{id}/reject', [\App\Http\Controllers\LoanController::class, 'reject'])->name('admin.loans.reject');
+    Route::put('/admin/loans/{id}/return', [\App\Http\Controllers\LoanController::class, 'returnItem'])->name('admin.loans.return');
 });
 
 
 // --- 3. RUTE KHUSUS WARGA ---
 Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
     
-    // Halaman Dashboard & Form Booking
+    // 1. Halaman Beranda Warga
     Route::get('/warga/dashboard', function () {
-        // Ambil semua barang yang tidak rusak/maintenance
-        $items = \App\Models\Item::whereIn('status', ['Available', 'Borrowed'])->get();
-        
-        // Ambil riwayat peminjaman milik warga ini saja
-        $myLoans = \App\Models\Loan::where('user_id', auth()->id())->latest()->get();
-        
-        return view('warga.dashboard', compact('items', 'myLoans')); 
+        return view('warga.dashboard'); 
     })->name('warga.dashboard');
 
-    // Rute Submit Form Booking (Mengarah ke LoanController yang tadi kita buat)
+    // 2. Halaman Form Pengajuan
+    Route::get('/warga/booking', [\App\Http\Controllers\LoanController::class, 'createWarga'])->name('warga.booking.create');
     Route::post('/warga/booking', [\App\Http\Controllers\LoanController::class, 'store'])->name('warga.booking.store');
     
+    // 3. Halaman Riwayat Peminjaman
+    Route::get('/warga/history', [\App\Http\Controllers\LoanController::class, 'historyWarga'])->name('warga.history');
 });
 
 

@@ -56,14 +56,27 @@
                                                     @csrf @method('PUT')
                                                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Setujui peminjaman ini?');">Setujui</button>
                                                 </form>
-                                                
-                                                <form action="{{ route('admin.loans.reject', $loan->id) }}" method="POST">
-                                                    @csrf @method('PUT')
-                                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Tolak peminjaman ini?');">Tolak</button>
-                                                </form>
-                                            </div>
+                                            
+                                            <form action="{{ route('admin.loans.reject', $loan->id) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Tolak peminjaman ini?');">Tolak</button>
+                                            </form>
+                                        </div>
+                                        @elseif($loan->status == 'Approved' || $loan->status == 'Active')
+                                            <form action="{{ route('admin.loans.return', $loan->id) }}" method="POST">
+                                                @csrf @method('PUT')
+                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs" onclick="return confirm('Konfirmasi barang telah dikembalikan fisik?');">Terima Pengembalian</button>
+                                            </form>
+                                            
+                                        @elseif($loan->status == 'Returned')
+                                            @if($loan->penalty)
+                                                <span class="text-red-600 font-bold text-xs">Denda: Rp {{ number_format($loan->penalty->amount, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="text-green-600 font-bold text-xs">Selesai (Tepat Waktu)</span>
+                                            @endif
+                                            
                                         @else
-                                            <span class="text-gray-400 text-xs italic">Selesai Diproses</span>
+                                            <span class="text-gray-400 text-xs italic">Ditolak</span>
                                         @endif
                                     </td>
                                 </tr>

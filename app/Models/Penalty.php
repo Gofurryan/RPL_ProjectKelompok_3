@@ -9,12 +9,10 @@ class Penalty extends Model
 {
     use HasFactory;
 
-    public $timestamps = false; 
+    protected $fillable = ['loan_id', 'amount', 'payment_status'];
 
-    protected $fillable = [
-        'loan_id',
-        'amount',
-        'status',
-        'notes',
-    ];
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
 }

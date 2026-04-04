@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
+    // Menampilkan halaman form booking untuk warga
+    public function createWarga()
+    {
+        $items = \App\Models\Item::whereIn('status', ['Available', 'Borrowed'])->get();
+        return view('warga.booking', compact('items'));
+    }
+
+    // Menampilkan halaman riwayat untuk warga
+    public function historyWarga()
+    {
+        $myLoans = \App\Models\Loan::where('user_id', auth()->id())->latest()->get();
+        return view('warga.history', compact('myLoans'));
+    }
+
     public function store(Request $request)
     {
         // 1. Validasi Input dari Warga
@@ -16,6 +30,13 @@ class LoanController extends Controller
             'item_id' => 'required|exists:items,id',
             'loan_date' => 'required|date|after_or_equal:today',
             'due_date' => 'required|date|after:loan_date',
+        ], [
+            // Error
+            'item_id.required' => 'Silakan pilih barang terlebih dahulu.',
+            'loan_date.required' => 'Rencana tanggal diambil wajib diisi.',
+            'loan_date.after_or_equal' => 'Tanggal pengambilan tidak boleh di masa lalu (minimal hari ini).',
+            'due_date.required' => 'Rencana tanggal dikembalikan wajib diisi.',
+            'due_date.after' => 'Tanggal pengembalian harus setelah tanggal peminjaman. *Silahkan periksa kembali.',
         ]);
 
         $itemId = $request->item_id;
@@ -49,7 +70,7 @@ class LoanController extends Controller
             'status' => 'Pending', // Menunggu disetujui Petugas/Ketua Takmir
         ]);
 
-        return redirect()->route('warga.dashboard')->with('success', 'Booking berhasil diajukan! Menunggu persetujuan petugas.');
+        return redirect()->route('warga.history')->with('success', 'Booking berhasil diajukan! Menunggu persetujuan petugas.');
     }
     // ==========================================
     // AREA ADMIN / PETUGAS
@@ -79,5 +100,47 @@ class LoanController extends Controller
         $loan->update(['status' => 'Rejected']);
 
         return redirect()->back()->with('success', 'Pengajuan peminjaman telah ditolak.');
+    }
+
+    // 4. Proses Pengembalian Barang & Cek Denda
+    public function returnItem($id)
+    {
+        $loan = Loan::findOrFail($id);
+        $now = \Carbon\Carbon::now();
+        $dueDate = \Carbon\Carbon::parse($loan->due_date);
+        
+        // Cek apakah tanggal sekarang melewati batas waktu (due_date)
+        $lateDays = 0;
+        if ($now->greaterThan($dueDate)) {
+            // Hitung selisih hari (dibulatkan ke atas)
+            $lateDays = $dueDate->diffInDays($now) + 1; 
+        }
+
+        // Jika terlambat, buat record denda (Rp 10.000 per hari)
+        $denda = 0;
+        if ($lateDays > 0) {
+            $denda = $lateDays * 10000;
+            \App\Models\Penalty::create([
+                'loan_id' => $loan->id,
+                'amount' => $denda,
+                'payment_status' => 'Unpaid'
+            ]);
+        }
+
+        // Kembalikan status peminjaman & catat tanggal kembali aktual
+        $loan->update([
+            'status' => 'Returned',
+            'return_date' => $now
+        ]);
+
+        // Bebaskan kembali barang di inventaris utama
+        $loan->item->update(['status' => 'Available']);
+
+        $pesan = 'Barang berhasil dikembalikan.';
+        if ($lateDays > 0) {
+            $pesan .= ' Peminjam TERLAMBAT ' . $lateDays . ' hari dan dikenakan denda Rp ' . number_format($denda, 0, ',', '.');
+        }
+
+        return redirect()->back()->with('success', $pesan);
     }
 }
