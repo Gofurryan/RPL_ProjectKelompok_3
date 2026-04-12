@@ -7,6 +7,13 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            @if(session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow-sm">
+                    <p class="font-bold">Berhasil!</p>
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
             
             <div class="mb-6">
                 <a href="{{ route('items.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
@@ -26,9 +33,11 @@
                                 <th class="py-3 px-4 text-center">Lokasi</th>
                                 <th class="py-3 px-4 text-center">Status</th>
                                 <th class="py-3 px-4 text-center">Kondisi</th>
+                                <th class="py-3 px-4 text-center">Stok</th>
                                 <th class="py-3 px-4 text-center">Aksi</th>
                             </tr>
                         </thead>
+
                         <tbody class="text-gray-600 text-sm font-light">
                             @forelse($items as $item)
                                 <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
@@ -59,6 +68,16 @@
                                             <span class="bg-gray-100 text-gray-800 py-1 px-3 rounded-md text-xs font-bold tracking-wide uppercase">{{ $item->condition ?? '-' }}</span>
                                         @endif
                                     </td>
+                                    <td class="py-4 px-4 text-center">
+                                        @if($item->stock <= 0)
+                                            <span class="text-red-600 font-bold">0 (Habis)</span>
+                                        @elseif($item->stock <= 2)
+                                            <span class="text-orange-500 font-bold">{{ $item->stock }} (Hampir Habis)</span>
+                                        @else
+                                            <span class="text-gray-700">{{ $item->stock }}</span>
+                                        @endif
+                                    </td>
+                                        </td>
                                     <td class="py-4 px-4 text-center">
                                         <div class="flex items-center justify-center space-x-3">
                                             <a href="{{ route('items.edit', $item->id) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold transition duration-150">Edit</a>

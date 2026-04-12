@@ -9,11 +9,22 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    
+
+                    @if ($errors->any())
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md shadow-sm">
+                    <p class="font-bold">Gagal Menyimpan Data:</p>
+                    <ul class="list-disc pl-5 mt-1 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
                     <form action="{{ route('items.store') }}" method="POST">
                         @csrf <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Nama Barang</label>
-                            <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <input type="text" name="name" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required value="{{ old('name') }}">
+                            
                         </div>
 
                         <div class="mb-4">
@@ -42,6 +53,16 @@
                                 <option value="fair">Layak</option>
                                 <option value="poor">Buruk</option>
                             </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="location" :value="__('Lokasi Barang (Misal: Lemari A / Gudang)')" />
+                            <x-text-input id="location" class="block mt-1 w-full" type="text" name="location" value="{{ old('location') }}" required />
+                        </div>
+
+                        <div class="mt-4">
+                            <x-input-label for="stock" :value="__('Jumlah Stok Barang')" />
+                            <x-text-input id="stock" class="block mt-1 w-full" type="number" name="stock" :value="old('stock')" required />
                         </div>
 
                         <div class="flex items-center justify-end mt-4 gap-6">

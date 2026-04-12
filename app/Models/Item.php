@@ -17,5 +17,6 @@ class Item extends Model
         'status',
         'location',
         'image_url',
+        'stock',
     ];
 }

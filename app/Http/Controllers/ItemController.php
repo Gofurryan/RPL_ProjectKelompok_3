@@ -13,7 +13,7 @@ class ItemController extends Controller
     public function index()
     {
         // Mengubah latest() menjadi orderBy('id', 'desc')
-        $items = Item::latest()->get();
+        $items = Item::orderBy('item_code', 'asc')->get();
         
         // Mengirim data $items ke file admin/items/index.blade.php
         return view('admin.items.index', compact('items'));
@@ -34,18 +34,38 @@ class ItemController extends Controller
     {
         // 1. Validasi inputan agar tidak ada data kosong/ngawur
         $request->validate([
-            'item_code' => 'required|string|unique:items,item_code',
             'name' => 'required|string|max:255',
             'category' => 'required|in:Elektronik,Furniture,Perlengkapan Ibadah,Sarana Umum',
             'status' => 'required|in:Available,Borrowed,Maintenance,Damaged',
             'location' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
         ]);
 
-        // 2. Simpan ke database
-        Item::create($request->all()); // Cara cepat menyimpan semua data
+        // LOGIKA AUTO-GENERATE KODE BARANG (Format: ITM-001, ITM-002, dst)
+        // Ambil data barang yang terakhir kali dibuat
+        $lastItem = Item::latest('id')->first(); 
+        
+        if ($lastItem && str_starts_with($lastItem->item_code, 'ITM-')) {
+            // Jika ada barang sebelumnya, ambil 3 digit angkanya lalu tambah 1
+            $lastNumber = (int) substr($lastItem->item_code, 4); 
+            $newNumber = $lastNumber + 1;
+            $newCode = 'ITM-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Jika database masih benar-benar kosong, mulai dari nomor 1
+            $newCode = 'ITM-001';
+        }
 
-        // 3. Kembalikan Admin ke halaman daftar barang
-        return redirect()->route('items.index');
+        // 2. Simpan ke database
+        Item::create([
+            'item_code' => $newCode, // Masukkan kode otomatis ke sini
+            'name' => $request->name,
+            'category' => $request->category,
+            'location' => $request->location,
+            'stock' => $request->stock,
+            'status' => 'Available', // Status default
+        ]);
+
+        return redirect()->route('items.index')->with('success', 'Barang berhasil ditambahkan dengan kode otomatis: ' . $newCode);
     }
 
     /**
@@ -71,19 +91,24 @@ class ItemController extends Controller
     {
         // 1. Validasi inputan baru
         $request->validate([
-            // Pengecualian unique agar bisa update tanpa harus ganti item_code
-            'item_code' => 'required|string|unique:items,item_code,' . $item->id, 
             'name' => 'required|string|max:255',
             'category' => 'required|in:Elektronik,Furniture,Perlengkapan Ibadah,Sarana Umum',
             'status' => 'required|in:Available,Borrowed,Maintenance,Damaged',
             'location' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
         ]);
 
          // 2. Simpan perubahan ke database
-        $item->update($request->all());
+        $item->update([
+            'name' => $request->name,
+            'category' => $request->category,
+            'location' => $request->location,
+            'stock' => $request->stock,
+            'condition' => $request->condition, // Jika ada pilihan kondisi di form
+            'status' => $request->status,       // Jika ada pilihan status di form
+        ]);
 
-        // 3. Kembali ke daftar barang
-        return redirect()->route('items.index');
+        return redirect()->route('items.index')->with('success', 'Data barang berhasil diperbarui.');
     }
 
     /**
@@ -93,6 +118,7 @@ class ItemController extends Controller
     {
         // 1. Hapus barang dari database
         $item->delete();
+        return redirect()->route('items.index')->with('success', 'Barang berhasil dihapus dari sistem.');
 
         // 2. Kembalikan ke halaman daftar barang
         return redirect()->route('items.index');

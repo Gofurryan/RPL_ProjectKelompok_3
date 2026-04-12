@@ -9,14 +9,26 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+
+                @if ($errors->any())
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md shadow-sm">
+                    <p class="font-bold">Gagal Menyimpan Data:</p>
+                    <ul class="list-disc pl-5 mt-1 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
                     
                     <form action="{{ route('items.update', $item->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
                         <div class="mb-4">
-                            <label for="item_code" class="block text-sm font-medium text-gray-700">Kode Barang</label>
-                            <input type="text" name="item_code" id="item_code" value="{{ $item->item_code }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <x-input-label for="item_code" :value="__('Kode Barang')" />
+                            <x-text-input id="item_code" class="block mt-1 w-full bg-gray-100 cursor-not-allowed text-gray-500" type="text" name="item_code" value="{{ $item->item_code }}" readonly />
+                            <p class="text-xs text-gray-500 mt-1">*Kode barang adalah identitas unik sistem dan tidak dapat diubah.</p>
                         </div>
 
                         <div class="mb-4">
@@ -35,8 +47,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="location" class="block text-sm font-medium text-gray-700">Lokasi Penyimpanan</label>
-                            <input type="text" name="location" id="location" value="{{ $item->location }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <x-input-label for="location" :value="__('Lokasi Barang')" />
+                            <x-text-input id="location" class="block mt-1 w-full" type="text" name="location" value="{{ old('location', $item->location) }}" required />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <x-input-label for="stock" :value="__('Jumlah Stok Barang')" />
+                            <x-text-input id="stock" class="block mt-1 w-full" type="number" name="stock" value="{{ old('stock', $item->stock) }}" required />
                         </div>
 
                         <div class="mb-6">

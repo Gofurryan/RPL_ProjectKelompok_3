@@ -39,13 +39,39 @@ class LoanController extends Controller
             'due_date.after' => 'Tanggal pengembalian harus setelah tanggal peminjaman. *Silahkan periksa kembali.',
         ]);
 
+        $user = auth()->user();
+
+        // RULE 1: Satu Warga = 1 Transaksi Aktif (Tidak boleh spam pengajuan)
+        $activeLoan = \App\Models\Loan::where('user_id', $user->id)
+            ->whereIn('status', ['Pending', 'Approved', 'Active'])
+            ->exists();
+
+        if ($activeLoan) {
+            return back()->withErrors(['conflict' => 'Sistem Menolak: Anda masih memiliki transaksi peminjaman yang sedang berjalan atau belum selesai.'])->withInput();
+        }
+
+        // RULE 2: Cek Blacklist (Jika sedang telat mengembalikan atau punya denda belum lunas)
+        $hasOverdue = \App\Models\Loan::where('user_id', $user->id)
+            ->where('status', 'Active')
+            ->where('due_date', '<', \Carbon\Carbon::now())
+            ->exists();
+
+        $hasUnpaidPenalty = \App\Models\Penalty::whereHas('loan', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->where('payment_status', 'Unpaid')->exists();
+
+        if ($hasOverdue || $hasUnpaidPenalty) {
+            return back()->withErrors(['conflict' => 'Sistem Menolak (Blacklist Sementara): Anda memiliki keterlambatan pengembalian atau denda yang belum dilunasi. Harap selesaikan tanggungan Anda terlebih dahulu.'])->withInput();
+        }
+
         $itemId = $request->item_id;
         $startDate = $request->loan_date;
         $endDate = $request->due_date;
 
-        // 2. CONFLICT DETECTION LOGIC (Cek Bentrok Jadwal)
-        $isConflict = Loan::where('item_id', $itemId)
-            ->whereIn('status', ['Approved', 'Active']) // Abaikan yang statusnya Pending/Rejected/Returned
+        // 2. CONFLICT DETECTION LOGIC (Standar Time-based Capacity)
+        // Hitung berapa banyak barang ini yang sedang dipinjam/disetujui pada tanggal tersebut
+        $bookedCount = Loan::where('item_id', $itemId)
+            ->whereIn('status', ['Approved', 'Active']) 
             ->where(function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('loan_date', [$startDate, $endDate])
                       ->orWhereBetween('due_date', [$startDate, $endDate])
@@ -54,11 +80,13 @@ class LoanController extends Controller
                             ->where('due_date', '>=', $endDate);
                       });
             })
-            ->exists(); // Mengembalikan nilai true jika bentrok, false jika aman
+            ->count(); // <--- Ubah exists() menjadi count()
 
-        if ($isConflict) {
-            // Jika jadwal bentrok, kembalikan ke halaman sebelumnya dengan error
-            return back()->withErrors(['conflict' => 'Maaf, barang ini sudah dibooking pada rentang tanggal tersebut. Silakan pilih tanggal lain.'])->withInput();
+        $item = \App\Models\Item::findOrFail($itemId);
+
+        // 3. Keputusan: Tolak jika jumlah yang dibooking sudah mencapai atau melebihi total stok
+        if ($bookedCount >= $item->stock) {
+            return back()->withErrors(['conflict' => 'Maaf, kuota stok barang ini sudah penuh (' . $bookedCount . '/' . $item->stock . ' terpakai) pada rentang tanggal tersebut.'])->withInput();
         }
 
         // Jika aman, simpan ke database dengan status 'Pending'
@@ -85,13 +113,23 @@ class LoanController extends Controller
 
     // 2. Menyetujui peminjaman
     public function approve($id)
-    {
-        $loan = Loan::findOrFail($id);
-        $loan->update(['status' => 'Approved']);
-        $loan->item->update(['status' => 'Borrowed']);
+{
+    $loan = Loan::findOrFail($id);
+    $item = $loan->item;
 
-        return redirect()->back()->with('success', 'Pengajuan peminjaman disetujui. Barang otomatis Dipinjam.');
+    // Cek apakah stok fisik masih tersedia sebelum mengurangi
+    if ($item->stock <= 0) {
+        return redirect()->back()->withErrors(['error' => 'Gagal menyetujui. Stok barang sudah habis!']);
     }
+
+    $loan->update(['status' => 'Approved']);
+    return redirect()->back()->with('success', 'Peminjaman disetujui.');
+    
+    // Logika Otak: Kurangi stok barang saat disetujui
+    //$item->decrement('stock');
+
+    //return redirect()->back()->with('success', 'Peminjaman disetujui dan stok barang telah dikurangi.');
+}
 
     // Fungsi baru: Menyerahkan barang fisik ke warga
     public function handover($id)
@@ -115,35 +153,28 @@ class LoanController extends Controller
 
     // 4. Proses Pengembalian Barang & Cek Denda
     public function returnItem($id)
-    {
-        $loan = Loan::findOrFail($id);
-        $now = \Carbon\Carbon::now();
-        $dueDate = \Carbon\Carbon::parse($loan->due_date);
-        
-        // Cek apakah tanggal sekarang melewati batas waktu (due_date)
-        $lateDays = 0;
-        if ($now->greaterThan($dueDate)) {
-            // Hitung selisih hari (dibulatkan ke atas)
-            $lateDays = $dueDate->diffInDays($now) + 1; 
-        }
+{
+    $loan = Loan::findOrFail($id);
+    
+    // Logika denda (tetap pertahankan yang sudah kamu buat)
+    $now = \Carbon\Carbon::now();
+    $dueDate = \Carbon\Carbon::parse($loan->due_date);
+    $lateDays = $now->greaterThan($dueDate) ? $dueDate->diffInDays($now) + 1 : 0;
 
-        // Jika terlambat, buat record denda (Rp 10.000 per hari)
-        $denda = 0;
-        if ($lateDays > 0) {
-            $denda = $lateDays * 10000;
-            \App\Models\Penalty::create([
-                'loan_id' => $loan->id,
-                'amount' => $denda,
-                'payment_status' => 'Unpaid'
-            ]);
-        }
-
-        // Kembalikan status peminjaman & catat tanggal kembali aktual
-        $loan->update([
-            'status' => 'Returned',
-            'return_date' => $now
+    if ($lateDays > 0) {
+        \App\Models\Penalty::create([
+            'loan_id' => $loan->id,
+            'amount' => $lateDays * 10000,
+            'payment_status' => 'Unpaid'
         ]);
+    }
 
+    $loan->update([
+        'status' => 'Returned',
+        'return_date' => \Carbon\Carbon::now()
+    ]);
+        //$loan->item->increment('stock');
+        return redirect()->back()->with('success', 'Barang berhasil dikembalikan.');
         // Bebaskan kembali barang di inventaris utama
         $loan->item->update(['status' => 'Available']);
 
@@ -165,5 +196,5 @@ class LoanController extends Controller
         $penalty->update(['payment_status' => 'Paid']);
 
         return redirect()->back()->with('success', 'Pembayaran denda berhasil dikonfirmasi. Status berubah menjadi Lunas.');
-    }
+    }   
 }

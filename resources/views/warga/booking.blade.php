@@ -29,11 +29,13 @@
 
                         <div class="mb-4">
                             <label for="item_id" class="block text-sm font-medium text-gray-700">Pilih Barang</label>
-                            <select name="item_id" id="item_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
-                                <option value="">-- Pilih Barang yang Tersedia --</option>
+                            <select name="item_id" id="item_id" class="mt-1 block w-full rounded-md border-gray-300" required>
+                                <option value="">-- Pilih Barang --</option>
                                 @foreach($items as $item)
-                                    <option value="{{ $item->id }}" {{ old('item_id') == $item->id ? 'selected' : '' }}>
-                                        [{{ $item->item_code }}] {{ $item->name }} - Kondisi: {{ ucfirst($item->condition) }}
+                                    <option value="{{ $item->id }}" {{ $item->stock <= 0 ? 'disabled' : '' }}>
+                                        [{{ $item->item_code }}] {{ $item->name }} 
+                                        (Sisa Stok: {{ $item->stock }}) 
+                                        @if($item->stock <= 0) - [STOK HABIS] @endif
                                     </option>
                                 @endforeach
                             </select>
