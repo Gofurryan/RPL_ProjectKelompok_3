@@ -1,21 +1,24 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
-import forms from '@tailwindcss/forms';
-
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
+        "./resources/**/*.blade.php",
+        "./resources/**/*.js",
+        "./resources/**/*.vue",
     ],
-
+    darkMode: 'class', // Agar fitur dark mode timmu aktif
     theme: {
         extend: {
+            colors: {
+                "primary": "#11d4d4",
+                "background-light": "#f6f8f8",
+                "background-dark": "#102222",
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                "display": ["Inter", "sans-serif"]
             },
         },
     },
-
-    plugins: [forms],
-};
+    plugins: [
+        require('@tailwindcss/forms'),
+    ],
+}

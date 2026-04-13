@@ -23,6 +23,9 @@
                     <x-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
                         {{ __('Kelola Peminjaman') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.reports.penalties')" :active="request()->routeIs('admin.reports.penalties')">
+                        {{ __('Laporan Denda') }}
+                    </x-nav-link>
                 @endif
                 @if (auth()->user()->role === 'warga')
                     <x-nav-link :href="route('warga.booking.create')" :active="request()->routeIs('warga.booking.*')">
@@ -95,6 +98,10 @@
 
                 <x-responsive-nav-link :href="route('admin.loans.index')" :active="request()->routeIs('admin.loans.*')">
                     {{ __('Kelola Peminjaman') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('admin.reports.penalties')" :active="request()->routeIs('admin.reports.penalties')">
+                    {{ __('Laporan Denda') }}
                 </x-responsive-nav-link>
             @endif
 

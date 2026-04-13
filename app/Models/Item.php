@@ -19,4 +19,11 @@ class Item extends Model
         'image_url',
         'stock',
     ];
+
+    // Contoh Accessor di app/Models/Item.php
+public function getIsBookableAttribute()
+{
+    // Barang hanya bisa dipinjam jika status fisiknya 'Tersedia' DAN stok > 0
+    return $this->status === 'Tersedia' && $this->stock > 0;
+}
 }

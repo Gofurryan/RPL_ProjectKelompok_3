@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::put('/admin/loans/{id}/return', [\App\Http\Controllers\LoanController::class, 'returnItem'])->name('admin.loans.return');
     Route::put('/admin/loans/{id}/handover', [\App\Http\Controllers\LoanController::class, 'handover'])->name('admin.loans.handover');
     Route::put('/admin/penalties/{id}/pay', [\App\Http\Controllers\LoanController::class, 'payPenalty'])->name('admin.penalties.pay');
+    Route::get('/admin/reports/penalties', [\App\Http\Controllers\LoanController::class, 'penaltyReport'])->name('admin.reports.penalties');
 });
 
 
@@ -61,6 +62,10 @@ Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
     
     // 3. Halaman Riwayat Peminjaman
     Route::get('/warga/history', [\App\Http\Controllers\LoanController::class, 'historyWarga'])->name('warga.history');
+
+    // Tambahkan baris ini di web.php (di luar prefix admin)
+    Route::get('/peminjaman/tambah', [\App\Http\Controllers\LoanController::class, 'create'])->name('loans.create');
+    Route::post('/peminjaman/simpan', [\App\Http\Controllers\LoanController::class, 'store'])->name('loans.store');
 });
 
 

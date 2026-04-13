@@ -13,6 +13,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        // Daftarkan robot Auto-Cancel milik kita di sini:
+        $schedule->command('loans:auto-cancel')->daily();
     }
 
     /**

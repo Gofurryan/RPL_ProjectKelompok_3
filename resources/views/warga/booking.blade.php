@@ -27,18 +27,33 @@
                     <form action="{{ route('warga.booking.store') }}" method="POST">
                         @csrf
 
-                        <div class="mb-4">
-                            <label for="item_id" class="block text-sm font-medium text-gray-700">Pilih Barang</label>
-                            <select name="item_id" id="item_id" class="mt-1 block w-full rounded-md border-gray-300" required>
-                                <option value="">-- Pilih Barang --</option>
-                                @foreach($items as $item)
-                                    <option value="{{ $item->id }}" {{ $item->stock <= 0 ? 'disabled' : '' }}>
-                                        [{{ $item->item_code }}] {{ $item->name }} 
-                                        (Sisa Stok: {{ $item->stock }}) 
-                                        @if($item->stock <= 0) - [STOK HABIS] @endif
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div id="items-container" class="space-y-4">
+                            <label class="block font-medium text-sm text-gray-700">Barang yang Ingin Dipinjam</label>
+                            
+                            <div class="item-row flex items-center space-x-4 bg-gray-50 p-4 rounded-lg border">
+                                <div class="flex-1">
+                                    <x-input-label value="Pilih Barang" />
+                                    <select name="items[0][id]" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500" required>
+                                        <option value="">-- Pilih --</option>
+                                        @foreach($items as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }} (Stok: {{ $item->stock }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="w-24">
+                                    <x-input-label value="Jumlah" />
+                                    <x-text-input type="number" name="items[0][qty]" value="1" min="1" class="block mt-1 w-full" required />
+                                </div>
+                                <div class="pt-6">
+                                    <span class="text-gray-400 text-sm italic">Wajib</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button type="button" id="add-item-btn" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                + Tambah Barang Lain
+                            </button>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -60,4 +75,46 @@
                     </form>
                 </div>
             </div>
+
+            <script>
+    let rowIndex = 1; // Mulai dari 1 karena indeks 0 sudah ada secara default
+
+    document.getElementById('add-item-btn').addEventListener('click', function() {
+        const container = document.getElementById('items-container');
+        
+        // Buat elemen baris baru
+        const newRow = document.createElement('div');
+        newRow.className = 'item-row flex items-center space-x-4 bg-gray-50 p-4 rounded-lg border mt-4 animate-fade-in';
+        
+        // Isi HTML baris baru dengan index yang dinamis
+        newRow.innerHTML = `
+            <div class="flex-1">
+                <x-input-label value="Pilih Barang" />
+                <select name="items[${rowIndex}][id]" class="block mt-1 w-full border-gray-300 rounded-md shadow-sm" required>
+                    <option value="">-- Pilih --</option>
+                    @foreach($items as $item)
+                        <option value="{{ $item->id }}">{{ $item->name }} (Stok: {{ $item->stock }})</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-24">
+                <x-input-label value="Jumlah" />
+                <x-text-input type="number" name="items[${rowIndex}][qty]" value="1" min="1" class="block mt-1 w-full" required />
+            </div>
+            <div class="pt-6">
+                <button type="button" class="remove-row-btn text-red-600 hover:text-red-900 font-bold">Hapus</button>
+            </div>
+        `;
+        
+        container.appendChild(newRow);
+        rowIndex++;
+    });
+
+    // Fungsi untuk menghapus baris
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('remove-row-btn')) {
+            e.target.closest('.item-row').remove();
+        }
+    });
+</script>
 </x-app-layout>

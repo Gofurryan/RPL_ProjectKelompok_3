@@ -11,7 +11,6 @@ class Loan extends Model
 
     protected $fillable = [
         'user_id',
-        'item_id',
         'loan_date',
         'due_date',
         'return_date',
@@ -23,13 +22,13 @@ class Loan extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
-
     public function penalty()
     {
         return $this->hasOne(Penalty::class);
+    }
+
+    public function details()
+    {
+    return $this->hasMany(LoanDetail::class);
     }
 }
