@@ -5,107 +5,239 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <style>
+        /* Gaya Kustom untuk Pagination agar berwarna Tema #11d4d4 */
+        .pagination-custom nav span[aria-current="page"] span {
+            background-color: #11d4d4 !important;
+            border-color: #11d4d4 !important;
+            color: white !important;
+        }
+        .pagination-custom nav a:hover {
+            color: #11d4d4 !important;
+        }
+    </style>
 
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md shadow-sm">
-                    <p class="font-bold">Berhasil!</p>
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
-            <div class="-mt-12">
-            <div class="mb-12">
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Data Inventaris Barang</h1>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Kelola, pantau, dan perbarui seluruh aset operasional tempat ibadah secara terpadu.</p>
+    <div class="mb-6 space-y-6" x-data="{ selectedItem: null }">
+
+        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div class="flex-1">
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Data Barang</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 mb-3">Kelola dan pantau seluruh aset operasional tempat ibadah</p>
+                
+                @if(session('success'))
+                    <div x-data="{ show: true }" 
+                         x-show="show" 
+                         x-init="setTimeout(() => show = false, 4000)" 
+                         x-transition.opacity.duration.300ms
+                         class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-3 py-2 rounded-lg text-sm shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                        <span class="font-medium">{{ session('success') }}</span>
+                        <button @click="show = false" class="ml-2 hover:text-emerald-900 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">close</span>
+                        </button>
+                    </div>
+                @endif
             </div>
 
-            <div class="mb-6">
-                <a href="{{ route('items.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    + Tambah Barang Baru
+            <div class="flex items-center gap-3">
+                <button class="inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">download</span>
+                    Export Data
+                </button>
+                
+                <a href="{{ route('items.create') }}" class="inline-flex items-center gap-2 bg-[#11d4d4] hover:bg-[#0eb8b8] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-[#11d4d4]/20">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    Tambah Barang
                 </a>
             </div>
+        </div>
 
-            <div class="bg-white shadow-sm sm:rounded-lg border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 border-b border-gray-200 text-gray-600 uppercase text-xs leading-normal">
-                                <th class="py-3 px-4 text-center w-12">No</th>
-                                <th class="py-3 px-4 text-left">Kode</th>
-                                <th class="py-3 px-4 text-left">Nama Barang</th>
-                                <th class="py-3 px-4 text-center">Kategori</th>
-                                <th class="py-3 px-4 text-center">Lokasi</th>
-                                <th class="py-3 px-4 text-center">Status</th>
-                                <th class="py-3 px-4 text-center">Kondisi</th>
-                                <th class="py-3 px-4 text-center">Stok</th>
-                                <th class="py-3 px-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
+        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+    <div class="flex flex-col lg:flex-row items-end gap-4">
+        <div class="flex-1 w-full">
+            <label class="block text-xs font-bold text-slate-500 mb-2 ml-4">Cari Barang</label>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                <input type="text" placeholder="Masukkan nama barang..." class="w-full bg-slate-50 border-none text-sm rounded-full py-3 pl-12 pr-6 focus:ring-2 focus:ring-[#11d4d4]/50 transition-all">
+            </div>
+        </div>
 
-                        <tbody class="text-gray-600 text-sm font-light">
-                            @forelse($items as $item)
-                                <tr class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
-                                    <td class="py-4 px-4 text-center font-medium">{{ $loop->iteration }}</td>
-                                    <td class="py-4 px-4 text-left font-medium text-indigo-600">{{ $item->item_code }}</td>
-                                    <td class="py-4 px-4 text-left font-medium text-gray-900">{{ $item->name }}</td>
-                                    <td class="py-4 px-4 text-center">{{ $item->category }}</td>
-                                    <td class="py-4 px-4 text-center">{{ $item->location ?? '-' }}</td>
-                                    <td class="py-4 px-4 text-center">
-                                        @if($item->status == 'Available')
-                                            <span class="bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs font-semibold">Tersedia</span>
-                                        @elseif($item->status == 'Damaged')
-                                            <span class="bg-red-100 text-red-800 py-1 px-3 rounded-full text-xs font-semibold">Rusak</span>
-                                        @elseif($item->status == 'Borrowed')
-                                            <span class="bg-yellow-100 text-yellow-800 py-1 px-3 rounded-full text-xs font-semibold">Dipinjam</span>
-                                        @elseif($item->status == 'Maintenance')
-                                            <span class="bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-xs font-semibold">Pemeliharaan</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        @if($item->condition == 'good')
-                                            <span class="bg-teal-100 text-teal-800 py-1 px-3 rounded-md text-xs font-bold tracking-wide uppercase">Baik</span>
-                                        @elseif($item->condition == 'fair')
-                                            <span class="bg-orange-100 text-orange-800 py-1 px-3 rounded-md text-xs font-bold tracking-wide uppercase">Layak</span>
-                                        @elseif($item->condition == 'poor')
-                                            <span class="bg-rose-100 text-rose-800 py-1 px-3 rounded-md text-xs font-bold tracking-wide uppercase">Buruk</span>
-                                        @else
-                                            <span class="bg-gray-100 text-gray-800 py-1 px-3 rounded-md text-xs font-bold tracking-wide uppercase">{{ $item->condition ?? '-' }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-4 px-4 text-center">
-                                        @if($item->stock <= 0)
-                                            <span class="text-red-600 font-bold">0 (Habis)</span>
-                                        @elseif($item->stock <= 2)
-                                            <span class="text-orange-500 font-bold">{{ $item->stock }} (Hampir Habis)</span>
-                                        @else
-                                            <span class="text-gray-700">{{ $item->stock }}</span>
-                                        @endif
-                                    </td>
-                                        </td>
-                                    <td class="py-4 px-4 text-center">
-                                        <div class="flex items-center justify-center space-x-3">
-                                            <a href="{{ route('items.edit', $item->id) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold transition duration-150">Edit</a>
-                                            <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="inline-block m-0" onsubmit="return confirm('Yakin ingin menghapus barang ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900 font-semibold transition duration-150">Hapus</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="py-8 px-6 text-center text-gray-500 font-medium">
-                                        Belum ada data barang di inventaris.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                <div class="w-full lg:w-48">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kategori</label>
+                    <div class="relative">
+                        <select class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-xl py-2.5 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
+                            <option value="">Semua Kategori</option>
+                            <option value="Elektronik">Elektronik</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Perlengkapan Ibadah">Perlengkapan Ibadah</option>
+                            <option value="Sarana Umum">Sarana Umum</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+                    </div>
                 </div>
+
+                <div class="w-full lg:w-48">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Status</label>
+                    <div class="relative">
+                        <select class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-xl py-2.5 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
+                            <option value="">Semua Status</option>
+                            <option value="Available">Tersedia</option>
+                            <option value="Borrowed">Dipinjam</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Damaged">Rusak</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+                    </div>
+                </div>
+
+                <button class="w-full lg:w-auto bg-[#11d4d4]/10 hover:bg-[#11d4d4]/20 text-[#0eb8b8] font-bold px-6 py-2.5 rounded-xl text-sm transition-colors mt-4 lg:mt-0 whitespace-nowrap">
+                    Terapkan
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50/50 border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Foto</th>
+                            <th class="px-6 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Nama Barang</th>
+                            <th class="px-6 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Kategori</th>
+                            <th class="px-6 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Status</th>
+                            <th class="px-6 py-5 text-[11px] font-extrabold text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @foreach($items as $item)
+                        <tr class="hover:bg-slate-50/30 transition-colors group">
+                            <td class="px-6 py-4">
+                                <div class="w-12 h-12 rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm">
+                                    @if($item->image)
+                                        <img src="{{ asset('storage/items/'.$item->image) }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                            <span class="material-symbols-outlined">inventory_2</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-bold text-slate-800">{{ $item->name }}</div>
+                                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">ID: {{ $item->item_code }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ $item->category ?? '-' }}</td>
+                            <td class="px-6 py-4">
+    @php
+        // Pemetaan warna berdasarkan status
+        $statusLower = strtolower($item->status);
+        if (str_contains($statusLower, 'tersedia') || $statusLower == 'available') {
+            $badgeColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+            $label = 'Tersedia';
+        } elseif (str_contains($statusLower, 'pinjam') || $statusLower == 'borrowed') {
+            $badgeColor = 'bg-orange-50 text-orange-600 border-orange-100';
+            $label = 'Dipinjam';
+        } elseif (str_contains($statusLower, 'rusak') || $statusLower == 'damaged') {
+            $badgeColor = 'bg-rose-50 text-rose-600 border-rose-100';
+            $label = 'Rusak';
+        } elseif (str_contains($statusLower, 'mainten') || $statusLower == 'perbaikan') {
+            $badgeColor = 'bg-sky-50 text-sky-600 border-sky-100';
+            $label = 'Maintenance';
+        } else {
+            $badgeColor = 'bg-slate-50 text-slate-500 border-slate-100';
+            $label = $item->status;
+        }
+    @endphp
+    <span class="px-3 py-1 text-[10px] font-bold rounded-full border {{ $badgeColor }}">
+        {{ $label }}
+    </span>
+</td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="flex items-center justify-end gap-1">
+                                    <button @click="selectedItem = {{ json_encode($item) }}" class="p-2 text-slate-400 hover:text-[#11d4d4] hover:bg-[#11d4d4]/10 rounded-full transition-all" title="Detail Barang">
+                                        <span class="material-symbols-outlined text-[20px]">info</span>
+                                    </button>
+                                    
+                                    <a href="{{ route('items.edit', $item->id) }}" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                    </a>
+                                    
+                                    <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus barang?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-all">
+                                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
 
+            <div class="px-8 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
+                <div class="text-xs font-bold text-slate-400">
+                    Menampilkan {{ $items->count() }} dari {{ $items->total() }} barang
+                </div>
+                <div class="pagination-custom">
+                    {{ $items->links() }}
+                </div>
+            </div>
         </div>
+
+        <template x-if="selectedItem">
+            <div class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-none" @click.self="selectedItem = null">
+                <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-xl font-extrabold text-slate-900" x-text="selectedItem.name"></h3>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" x-text="'ID: ' + selectedItem.item_code"></p>
+                            </div>
+                            <button @click="selectedItem = null" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-3xl">
+                                <div class="w-10 h-10 rounded-2xl bg-[#11d4d4]/10 flex items-center justify-center text-[#11d4d4]">
+                                    <span class="material-symbols-outlined">inventory_2</span>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Stok Tersedia</p>
+                                    <p class="text-sm font-bold text-slate-700" x-text="selectedItem.stock + ' Unit'"></p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-3xl">
+                                <div class="w-10 h-10 rounded-2xl bg-[#11d4d4]/10 flex items-center justify-center text-[#11d4d4]">
+                                    <span class="material-symbols-outlined">location_on</span>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Lokasi Penyimpanan</p>
+                                    <p class="text-sm font-bold text-slate-700" x-text="selectedItem.location || 'Tidak ditentukan'"></p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-3xl">
+                                <div class="w-10 h-10 rounded-2xl bg-[#11d4d4]/10 flex items-center justify-center text-[#11d4d4]">
+                                    <span class="material-symbols-outlined">health_and_safety</span>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Kondisi Fisik</p>
+                                    <p class="text-sm font-bold text-slate-700 capitalize" x-text="selectedItem.condition || '-'"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button @click="selectedItem = null" class="w-full mt-8 py-3 bg-[#11d4d4] text-white font-bold rounded-full hover:bg-[#0eb8b8] transition-all shadow-lg shadow-[#11d4d4]/20">
+                            Tutup Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
 </x-app-layout>

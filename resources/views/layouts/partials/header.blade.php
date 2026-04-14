@@ -1,8 +1,7 @@
 <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-10">
     <div class="flex-1 max-w-md">
-        <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-            <input type="text" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/50 transition-all" placeholder="Cari barang atau transaksi...">
+        <div class="flex-1 max-w-md">
+            <livewire:global-search />
         </div>
     </div>
     <div class="flex items-center gap-4">

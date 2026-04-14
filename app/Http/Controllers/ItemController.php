@@ -14,6 +14,8 @@ class ItemController extends Controller
     {
         // Mengubah latest() menjadi orderBy('id', 'desc')
         $items = Item::orderBy('item_code', 'asc')->get();
+
+        $items = \App\Models\Item::orderBy('item_code', 'asc')->paginate(5);
         
         // Mengirim data $items ke file admin/items/index.blade.php
         return view('admin.items.index', compact('items'));
@@ -43,7 +45,8 @@ class ItemController extends Controller
 
         // LOGIKA AUTO-GENERATE KODE BARANG (Format: ITM-001, ITM-002, dst)
         // Ambil data barang yang terakhir kali dibuat
-        $lastItem = Item::latest('id')->first(); 
+        $lastItem = Item::latest('id')->first();
+        $items = Item::latest()->paginate(5); // Ubah menjadi 5 agar sesuai desain
         
         if ($lastItem && str_starts_with($lastItem->item_code, 'ITM-')) {
             // Jika ada barang sebelumnya, ambil 3 digit angkanya lalu tambah 1
