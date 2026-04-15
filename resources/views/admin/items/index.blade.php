@@ -6,6 +6,18 @@
     </x-slot>
 
     <style>
+        /* 1. SEMBUNYIKAN TEKS "SHOWING OF RESULTS" BAWAAN LARAVEL */
+            .pagination-custom nav p.leading-5,
+            .pagination-custom nav > div.sm\:flex-1 > div:first-child {
+                display: none !important;
+            }
+
+            /* 2. DORONG TOMBOL PAGINATION FULL KE KANAN */
+            .pagination-custom nav > div.sm\:flex-1 {
+                display: flex !important;
+                justify-content: flex-end !important;
+                width: 100% !important;
+            }
         /* Gaya Kustom untuk Pagination agar berwarna Tema #11d4d4 */
         .pagination-custom nav span[aria-current="page"] span {
             background-color: #11d4d4 !important;
@@ -52,49 +64,56 @@
             </div>
         </div>
 
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+        <form action="{{ route('items.index') }}" method="GET" class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
     <div class="flex flex-col lg:flex-row items-end gap-4">
+        
         <div class="flex-1 w-full">
             <label class="block text-xs font-bold text-slate-500 mb-2 ml-4">Cari Barang</label>
             <div class="relative">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-                <input type="text" placeholder="Masukkan nama barang..." class="w-full bg-slate-50 border-none text-sm rounded-full py-3 pl-12 pr-6 focus:ring-2 focus:ring-[#11d4d4]/50 transition-all">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Masukkan nama barang atau ID..." class="w-full bg-slate-50 border-none text-sm rounded-full py-3 pl-12 pr-6 focus:ring-2 focus:ring-[#11d4d4]/50 transition-all">
             </div>
         </div>
 
-                <div class="w-full lg:w-48">
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kategori</label>
-                    <div class="relative">
-                        <select class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-xl py-2.5 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
-                            <option value="">Semua Kategori</option>
-                            <option value="Elektronik">Elektronik</option>
-                            <option value="Furniture">Furniture</option>
-                            <option value="Perlengkapan Ibadah">Perlengkapan Ibadah</option>
-                            <option value="Sarana Umum">Sarana Umum</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
-                    </div>
-                </div>
-
-                <div class="w-full lg:w-48">
-                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Status</label>
-                    <div class="relative">
-                        <select class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-xl py-2.5 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
-                            <option value="">Semua Status</option>
-                            <option value="Available">Tersedia</option>
-                            <option value="Borrowed">Dipinjam</option>
-                            <option value="Maintenance">Maintenance</option>
-                            <option value="Damaged">Rusak</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
-                    </div>
-                </div>
-
-                <button class="w-full lg:w-auto bg-[#11d4d4]/10 hover:bg-[#11d4d4]/20 text-[#0eb8b8] font-bold px-6 py-2.5 rounded-xl text-sm transition-colors mt-4 lg:mt-0 whitespace-nowrap">
-                    Terapkan
-                </button>
+        <div class="w-full lg:w-48">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-4">Kategori</label>
+            <div class="relative">
+                <select name="category" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-full py-3 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
+                    <option value="">Semua Kategori</option>
+                    <option value="Elektronik" {{ request('category') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                    <option value="Furniture" {{ request('category') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                    <option value="Perlengkapan Ibadah" {{ request('category') == 'Perlengkapan Ibadah' ? 'selected' : '' }}>Perlengkapan Ibadah</option>
+                    <option value="Sarana Umum" {{ request('category') == 'Sarana Umum' ? 'selected' : '' }}>Sarana Umum</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
             </div>
         </div>
+
+        <div class="w-full lg:w-48">
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-4">Status</label>
+            <div class="relative">
+                <select name="status" class="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded-full py-3 px-4 appearance-none focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all cursor-pointer">
+                    <option value="">Semua Status</option>
+                    <option value="Available" {{ request('status') == 'Available' ? 'selected' : '' }}>Tersedia</option>
+                    <option value="Borrowed" {{ request('status') == 'Borrowed' ? 'selected' : '' }}>Dipinjam</option>
+                    <option value="Maintenance" {{ request('status') == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
+                    <option value="Damaged" {{ request('status') == 'Damaged' ? 'selected' : '' }}>Rusak</option>
+                </select>
+                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">expand_more</span>
+            </div>
+        </div>
+
+        <button type="submit" class="w-full lg:w-auto bg-[#11d4d4]/10 hover:bg-[#11d4d4]/20 text-[#0eb8b8] font-bold px-6 py-3 rounded-full text-sm transition-colors lg:mt-0 whitespace-nowrap">
+            Terapkan
+        </button>
+        
+        @if(request()->anyFilled(['search', 'category', 'status']))
+            <a href="{{ route('items.index') }}" class="w-full lg:w-auto bg-rose-50 hover:bg-rose-100 text-rose-500 font-bold px-4 py-3 rounded-full text-sm transition-colors lg:mt-0 whitespace-nowrap text-center">
+                <span class="material-symbols-outlined text-[18px] align-middle">close</span>
+            </a>
+        @endif
+    </div>
+</form>
 
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
@@ -128,30 +147,30 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-slate-600 font-medium">{{ $item->category ?? '-' }}</td>
                             <td class="px-6 py-4">
-    @php
-        // Pemetaan warna berdasarkan status
-        $statusLower = strtolower($item->status);
-        if (str_contains($statusLower, 'tersedia') || $statusLower == 'available') {
-            $badgeColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
-            $label = 'Tersedia';
-        } elseif (str_contains($statusLower, 'pinjam') || $statusLower == 'borrowed') {
-            $badgeColor = 'bg-orange-50 text-orange-600 border-orange-100';
-            $label = 'Dipinjam';
-        } elseif (str_contains($statusLower, 'rusak') || $statusLower == 'damaged') {
-            $badgeColor = 'bg-rose-50 text-rose-600 border-rose-100';
-            $label = 'Rusak';
-        } elseif (str_contains($statusLower, 'mainten') || $statusLower == 'perbaikan') {
-            $badgeColor = 'bg-sky-50 text-sky-600 border-sky-100';
-            $label = 'Maintenance';
-        } else {
-            $badgeColor = 'bg-slate-50 text-slate-500 border-slate-100';
-            $label = $item->status;
-        }
-    @endphp
-    <span class="px-3 py-1 text-[10px] font-bold rounded-full border {{ $badgeColor }}">
-        {{ $label }}
-    </span>
-</td>
+                            @php
+                                // Pemetaan warna berdasarkan status
+                                $statusLower = strtolower($item->status);
+                                if (str_contains($statusLower, 'tersedia') || $statusLower == 'available') {
+                                    $badgeColor = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+                                    $label = 'Tersedia';
+                                } elseif (str_contains($statusLower, 'pinjam') || $statusLower == 'borrowed') {
+                                    $badgeColor = 'bg-orange-50 text-orange-600 border-orange-100';
+                                    $label = 'Dipinjam';
+                                } elseif (str_contains($statusLower, 'rusak') || $statusLower == 'damaged') {
+                                    $badgeColor = 'bg-rose-50 text-rose-600 border-rose-100';
+                                    $label = 'Rusak';
+                                } elseif (str_contains($statusLower, 'mainten') || $statusLower == 'perbaikan') {
+                                    $badgeColor = 'bg-sky-50 text-sky-600 border-sky-100';
+                                    $label = 'Maintenance';
+                                } else {
+                                    $badgeColor = 'bg-slate-50 text-slate-500 border-slate-100';
+                                    $label = $item->status;
+                                }
+                            @endphp
+                            <span class="px-3 py-1 text-[10px] font-bold rounded-full border {{ $badgeColor }}">
+                                {{ $label }}
+                            </span>
+                        </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
                                     <button @click="selectedItem = {{ json_encode($item) }}" class="p-2 text-slate-400 hover:text-[#11d4d4] hover:bg-[#11d4d4]/10 rounded-full transition-all" title="Detail Barang">
@@ -178,25 +197,50 @@
 
             <div class="px-8 py-5 bg-slate-50/30 border-t border-slate-50 flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400">
-                    Menampilkan {{ $items->count() }} dari {{ $items->total() }} barang
+                    @if($items->total() > 0)
+                        Menampilkan {{ $items->firstItem() }} 
+                        sampai {{ $items->lastItem() }}
+                        dari <span class="text-[#11d4d4]">{{ $items->total() }}</span> barang
+                    @endif
                 </div>
                 <div class="pagination-custom">
-                    {{ $items->links() }}
+                    {{ $items->appends(request()->query())->links() }}
                 </div>
             </div>
         </div>
 
-        <template x-if="selectedItem">
-            <div class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-none" @click.self="selectedItem = null">
-                <div class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+        <template x-teleport="body">
+            <div x-show="selectedItem" 
+                 class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+                 style="display: none;" 
+                 x-cloak>
+                 
+                <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" 
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click="selectedItem = null">
+                </div>
+
+                <div class="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden"
+                     x-transition:enter="ease-out duration-300"
+                     x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                     x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave="ease-in duration-200"
+                     x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+                     
                     <div class="p-8">
                         <div class="flex justify-between items-start mb-6">
                             <div>
                                 <h3 class="text-xl font-extrabold text-slate-900" x-text="selectedItem.name"></h3>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest" x-text="'ID: ' + selectedItem.item_code"></p>
                             </div>
-                            <button @click="selectedItem = null" class="text-slate-400 hover:text-rose-500 transition-colors">
-                                <span class="material-symbols-outlined">close</span>
+                            <button @click="selectedItem = null" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors">
+                                <span class="material-symbols-outlined text-lg">close</span>
                             </button>
                         </div>
 
@@ -226,13 +270,19 @@
                                     <span class="material-symbols-outlined">health_and_safety</span>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Kondisi Fisik</p>
-                                    <p class="text-sm font-bold text-slate-700 capitalize" x-text="selectedItem.condition || '-'"></p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Kondisi Fisik</p>
+                                    <p class="text-base font-bold text-slate-700 capitalize" 
+                                        x-text="{
+                                        'good': 'Baik',
+                                        'fair': 'Layak',
+                                        'poor': 'Buruk'
+                                        }[selectedItem.condition] || selectedItem.condition || '-'">
+                                    </p>
                                 </div>
                             </div>
                         </div>
 
-                        <button @click="selectedItem = null" class="w-full mt-8 py-3 bg-[#11d4d4] text-white font-bold rounded-full hover:bg-[#0eb8b8] transition-all shadow-lg shadow-[#11d4d4]/20">
+                        <button @click="selectedItem = null" class="w-full mt-8 py-3 bg-[#11d4d4] text-white font-bold rounded-full hover:bg-[#0eb8b8] transition-all shadow-lg shadow-[#11d4d4]/20 uppercase tracking-wide text-sm">
                             Tutup Detail
                         </button>
                     </div>

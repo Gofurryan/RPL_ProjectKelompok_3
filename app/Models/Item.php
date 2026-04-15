@@ -18,6 +18,7 @@ class Item extends Model
         'location',
         'image_url',
         'stock',
+        'image',
     ];
 
     // Contoh Accessor di app/Models/Item.php
