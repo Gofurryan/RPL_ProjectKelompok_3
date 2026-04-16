@@ -34,8 +34,7 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
     
-    // Kelola Barang
-    Route::resource('admin/items', ItemController::class);
+
 
     // Kelola Peminjaman (Booking)
     Route::get('/admin/loans', [\App\Http\Controllers\LoanController::class, 'adminIndex'])->name('admin.loans.index');
@@ -45,7 +44,11 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::put('/admin/loans/{id}/handover', [\App\Http\Controllers\LoanController::class, 'handover'])->name('admin.loans.handover');
     Route::put('/admin/penalties/{id}/pay', [\App\Http\Controllers\LoanController::class, 'payPenalty'])->name('admin.penalties.pay');
     Route::get('/admin/reports/penalties', [\App\Http\Controllers\LoanController::class, 'penaltyReport'])->name('admin.reports.penalties');
+    Route::get('/admin/items/export', [App\Http\Controllers\ItemController::class, 'export'])->name('items.export'); 
 });
+
+// Kelola Barang
+    Route::resource('admin/items', ItemController::class);
 
 
 // --- 3. RUTE KHUSUS WARGA ---

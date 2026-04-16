@@ -52,11 +52,11 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <button class="inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-                    <span class="material-symbols-outlined text-[18px]">download</span>
-                    Export Data
-                </button>
-                
+                    <a href="{{ route('items.export', request()->query()) }}" class="flex items-center gap-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white px-5 py-2.5 rounded-full text-sm font-bold transition-all border border-emerald-100 shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        Export Data
+                    </a>
+                                    
                 <a href="{{ route('items.create') }}" class="inline-flex items-center gap-2 bg-[#11d4d4] hover:bg-[#0eb8b8] text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-[#11d4d4]/20">
                     <span class="material-symbols-outlined text-[18px]">add</span>
                     Tambah Barang

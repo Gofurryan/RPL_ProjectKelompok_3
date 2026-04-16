@@ -246,15 +246,20 @@ class LoanController extends Controller
     public function penaltyReport()
     {
         // 1. Ambil HANYA denda yang sudah LUNAS (Paid)
-        // Gunakan Eager Loading (with) agar pemanggilan nama warga tidak membuat sistem lemot
         $penalties = \App\Models\Penalty::with(['loan.user'])
                         ->where('payment_status', 'Paid')
-                        ->orderBy('updated_at', 'desc') // Urutkan dari pembayaran terbaru
+                        ->orderBy('updated_at', 'desc')
                         ->get();
 
-        // 2. Hitung total semua uang yang masuk
         $totalIncome = $penalties->sum('amount');
 
-        return view('admin.reports.penalties', compact('penalties', 'totalIncome'));
+        // 2. Ambil Barang Terlambat (Status Active & Lewat Tanggal)
+        $overdueLoans = \App\Models\Loan::with(['details.item', 'user'])
+                        ->where('status', 'Active') 
+                        ->where('due_date', '<', now())
+                        ->get();
+
+        // 3. Kirim ke View (TIDAK ADA dd SAMA SEKALI DI SINI)
+        return view('admin.reports.penalties', compact('penalties', 'totalIncome', 'overdueLoans'));
     }
-}
+}   

@@ -4,6 +4,7 @@ export default {
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
         "./resources/**/*.vue",
+        './resources/views/**/*.blade.php',
     ],
     darkMode: 'class', // Agar fitur dark mode timmu aktif
     theme: {

@@ -191,4 +191,65 @@ class ItemController extends Controller
         // 2. Kembalikan ke halaman daftar barang dengan pesan sukses
         return redirect()->route('items.index')->with('success', 'Barang berhasil dihapus dari sistem.');
     }
+
+    /**
+     * Export Data Barang ke Format CSV (Excel)
+     */
+    public function export(Request $request) // Tambahkan parameter Request $request
+{
+    // 1. Inisialisasi query seperti di fungsi index
+    $query = \App\Models\Item::query();
+
+    // 2. Terapkan Filter yang sama dengan halaman daftar barang
+    if ($request->filled('search')) {
+        $query->where(function($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->search . '%')
+              ->orWhere('item_code', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    if ($request->filled('category')) {
+        $query->where('category', $request->category);
+    }
+
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // 3. Ambil data hasil filter
+    $items = $query->orderBy('item_code', 'asc')->get();
+
+    // --- Sisa kode streaming CSV tetap sama ---
+    $filename = "Export_Inventaris_" . date('Y-m-d_H-i') . ".csv";
+    $headers = [
+        "Content-type"        => "text/csv",
+        "Content-Disposition" => "attachment; filename=$filename",
+        "Pragma"              => "no-cache",
+        "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+        "Expires"             => "0"
+    ];
+
+    $callback = function() use($items) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, ['ID Barang', 'Nama Barang', 'Kategori', 'Status', 'Stok', 'Kondisi', 'Lokasi']);
+
+        $conditionMap = ['good' => 'Baik', 'fair' => 'Layak', 'poor' => 'Buruk'];
+        $statusMap = ['Available' => 'Tersedia', 'Borrowed' => 'Dipinjam', 'Maintenance' => 'Maintenance', 'Damaged' => 'Rusak'];
+
+        foreach ($items as $item) {
+            fputcsv($file, [
+                $item->item_code,
+                $item->name,
+                $item->category,
+                $statusMap[$item->status] ?? $item->status,
+                $item->stock,
+                $conditionMap[$item->condition] ?? $item->condition,
+                $item->location ?? '-'
+            ]);
+        }
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
 }
+}   
