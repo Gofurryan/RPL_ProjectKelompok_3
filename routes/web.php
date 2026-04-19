@@ -44,7 +44,8 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
     Route::put('/admin/loans/{id}/handover', [\App\Http\Controllers\LoanController::class, 'handover'])->name('admin.loans.handover');
     Route::put('/admin/penalties/{id}/pay', [\App\Http\Controllers\LoanController::class, 'payPenalty'])->name('admin.penalties.pay');
     Route::get('/admin/reports/penalties', [\App\Http\Controllers\LoanController::class, 'penaltyReport'])->name('admin.reports.penalties');
-    Route::get('/admin/items/export', [App\Http\Controllers\ItemController::class, 'export'])->name('items.export'); 
+    Route::get('/admin/items/export', [App\Http\Controllers\ItemController::class, 'export'])->name('items.export');
+    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 });
 
 // Kelola Barang
@@ -55,9 +56,7 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
 Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
     
     // 1. Halaman Beranda Warga
-    Route::get('/warga/dashboard', function () {
-        return view('warga.dashboard'); 
-    })->name('warga.dashboard');
+    Route::get('/warga/dashboard', [\App\Http\Controllers\LoanController::class, 'dashboardWarga'])->name('warga.dashboard');
 
     // 2. Halaman Form Pengajuan
     Route::get('/warga/booking', [\App\Http\Controllers\LoanController::class, 'createWarga'])->name('warga.booking.create');

@@ -22,9 +22,20 @@
 
             <div class="p-8">
                 {{ $slot }}
+                <footer class="mt-auto py-6 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-slate-50/50">
+                    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p class="text-xs font-medium text-slate-500 text-center md:text-left">
+                            &copy; {{ date('Y') }} <span class="font-bold text-[#11d4d4]">Inventaris Ibadah</span>. Sistem Manajemen Aset Terpadu.
+                        </p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            Versi 1.0.0
+                        </p>
+                    </div>
+                </footer>
             </div>
         </main>
     </div>
     @livewireScripts
+    
 </body>
 </html>

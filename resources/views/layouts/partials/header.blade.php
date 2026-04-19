@@ -12,7 +12,7 @@
         <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
         <div class="flex items-center gap-2 text-sm font-medium px-3 py-2">
             <span class="material-symbols-outlined text-primary text-xl">calendar_today</span>
-            <span>{{ now()->translatedFormat('d M Y') }}</span>
+            <span>{{ now()->translatedFormat('d F Y') }}</span>
         </div>
     </div>
 </header>
