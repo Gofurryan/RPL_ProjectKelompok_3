@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\DashboardApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Prefix /dashboard untuk mengelompokkan API khusus dashboard
+Route::prefix('dashboard')->group(function () {
+    Route::get('/statistics', [DashboardApiController::class, 'statistics']);
+    Route::get('/activities', [DashboardApiController::class, 'activities']);
+}
+);

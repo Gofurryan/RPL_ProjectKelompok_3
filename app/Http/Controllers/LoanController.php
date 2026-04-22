@@ -145,7 +145,6 @@ class LoanController extends Controller
                 return $loan; // Kembalikan data $loan
             });
 
-            // [BUG FIXED]: Sekarang $loan bisa dibaca dengan aman di sini
             ActivityLog::record("Mengajukan peminjaman baru", $loan);
 
             // Menyatukan pesan menjadi 1 string kuat agar tidak bentrok dengan Blade
@@ -215,7 +214,6 @@ class LoanController extends Controller
             'return_date' => $now
         ]);
 
-        // [BUG FIXED]: Menambahkan ActivityLog pada saat barang dikembalikan
         ActivityLog::record("Menerima pengembalian barang dari " . $loan->user->name, $loan);
 
         return redirect()->back()->with('success', 'Barang kembali. Status berubah menjadi Dikembalikan.');
