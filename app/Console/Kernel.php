@@ -15,6 +15,9 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         // Daftarkan robot Auto-Cancel milik kita di sini:
         $schedule->command('loans:auto-cancel')->daily();
+
+        // Jalankan perintah ini setiap hari pada jam 8 pagi
+        $schedule->command('app:send-return-reminders')->dailyAt('08:00');
     }
 
     /**

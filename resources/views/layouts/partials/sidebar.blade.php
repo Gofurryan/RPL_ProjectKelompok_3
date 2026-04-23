@@ -28,6 +28,10 @@
                 <span class="material-symbols-outlined">description</span>
                 <span>Laporan Denda</span>
             </a>
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.users.*') ? 'bg-primary/10 text-primary font-medium' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800' }} transition-colors">
+                <span class="material-symbols-outlined">group</span>
+                <span class=>Data Warga</span>
+            </a>
             <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 px-4 py-3 rounded-lg {{ request()->routeIs('profile.edit') ? 'bg-[#11d4d4]/10 text-[#11d4d4] font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-800' }} transition-colors">
                 <span class="material-symbols-outlined">settings</span>
                 <span class=>Pengaturan</span>

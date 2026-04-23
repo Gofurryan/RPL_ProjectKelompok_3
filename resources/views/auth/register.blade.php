@@ -151,7 +151,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Sistem Aktif</span>
         </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">v2.4.0 • © {{ date('Y') }}</span>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">v1.0.0 • © {{ date('Y') }}</span>
     </div>
 
     <script>
