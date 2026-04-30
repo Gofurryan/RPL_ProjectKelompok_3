@@ -17,7 +17,7 @@
             </a>
         </div>
 
-        <form action="{{ route('items.update', $item->id) }}" method="POST" enctype="multipart/form-data" 
+        <form action="{{ route('items.update', $item->id) }}" method="POST" enctype="multipart/form-data"
               x-data="{ 
                   // Muat gambar lama dari database jika ada
                   imageUrl: '{{ $item->image ? asset('storage/items/'.$item->image) : '' }}',
@@ -32,6 +32,21 @@
               class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100">
             
             @csrf
+
+            @if ($errors->any())
+        <div class="mb-8 p-6 bg-rose-50 border border-rose-200 rounded-3xl">
+            <div class="flex items-center gap-2 text-rose-700 font-black mb-3 text-sm uppercase tracking-widest">
+                <span class="material-symbols-outlined text-rose-500">warning</span>
+                Penyebab Gagal Simpan:
+            </div>
+            <ul class="list-disc list-inside text-sm font-bold text-rose-500 space-y-1">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    
             @method('PUT') <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 
                 <div class="lg:col-span-8 space-y-6">
