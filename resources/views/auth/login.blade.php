@@ -12,11 +12,27 @@
 
     <style>
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Animasi pergerakan lambat untuk Blobs */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 10s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-slate-200 antialiased text-slate-800 min-h-screen flex flex-col justify-center items-center relative py-10 px-4">
+<body class="bg-slate-50 antialiased text-slate-800 min-h-screen flex flex-col justify-center items-center relative py-10 px-4 overflow-hidden">
 
-    <div class="w-full max-w-[420px] bg-[#fdfdfd] rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-300/50 border border-white z-10">
+    <!-- Blobs Dekoratif Latar Belakang -->
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#11d4d4]/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none z-0"></div>
+    <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-blue-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none z-0"></div>
+    <div class="absolute -bottom-32 left-[20%] w-96 h-96 bg-emerald-200/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000 pointer-events-none z-0"></div>
+
+    <div class="w-full max-w-[420px] bg-[#fdfdfd] rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-300/50 border border-white z-10 relative">
         
         <div class="w-16 h-16 bg-[#11d4d4]/10 rounded-full flex items-center justify-center mx-auto mb-5">
             <div class="flex gap-1.5 items-center">
@@ -48,47 +64,47 @@
             </div>
 
             <div class="mb-6">
-    <div class="flex justify-between items-center mb-2">
-        <label for="password" class="text-xs font-black text-slate-700">
-            Kata Sandi
-        </label>
+                <div class="flex justify-between items-center mb-2">
+                    <label for="password" class="text-xs font-black text-slate-700">
+                        Kata Sandi
+                    </label>
 
-        @if (Route::has('password.request'))
-            <a href="{{ route('password.request') }}"
-               class="text-xs font-bold text-[#11d4d4] hover:text-[#0eb8b8] transition-colors">
-                Lupa kata sandi?
-            </a>
-        @endif
-    </div>
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}"
+                           class="text-xs font-bold text-[#11d4d4] hover:text-[#0eb8b8] transition-colors">
+                            Lupa kata sandi?
+                        </a>
+                    @endif
+                </div>
 
-    <div class="relative">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">
-            lock
-        </span>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">
+                        lock
+                    </span>
 
-        <input
-            id="password"
-            type="password"
-            name="password"
-            required
-            autocomplete="current-password"
-            class="w-full pl-11 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all outline-none placeholder:text-slate-400"
-            placeholder="••••••••"
-        >
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        class="w-full pl-11 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all outline-none placeholder:text-slate-400"
+                        placeholder="••••••••"
+                    >
 
-        <button
-            type="button"
-            id="togglePassword"
-            class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#11d4d4] transition-colors z-20"
-        >
-            <span id="eyeIcon" class="material-symbols-outlined text-[20px]">
-                visibility_off
-            </span>
-        </button>
-    </div>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#11d4d4] transition-colors z-20"
+                    >
+                        <span id="eyeIcon" class="material-symbols-outlined text-[20px]">
+                            visibility_off
+                        </span>
+                    </button>
+                </div>
 
-    <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs font-bold text-rose-500" />
-</div>
+                <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs font-bold text-rose-500" />
+            </div>
 
             <div class="flex items-center mb-8">
                 <input id="remember_me" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-[#11d4d4] focus:ring-[#11d4d4] focus:ring-offset-0 bg-white" name="remember">
@@ -108,7 +124,7 @@
         </div>
     </div>
 
-    <div class="w-full max-w-[420px] flex justify-between items-center mt-6 text-slate-400 px-2">
+    <div class="w-full max-w-[420px] flex justify-between items-center mt-6 text-slate-400 px-2 relative z-10">
         <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span>
             <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Sistem Aktif</span>
@@ -117,25 +133,19 @@
     </div>
 
     <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("password");
+        const toggleBtn = document.getElementById("togglePassword");
+        const eyeIcon = document.getElementById("eyeIcon");
 
-    const passwordInput = document.getElementById("password");
-    const toggleBtn = document.getElementById("togglePassword");
-    const eyeIcon = document.getElementById("eyeIcon");
+        toggleBtn.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
 
-    toggleBtn.addEventListener("click", function () {
-
-        const isPassword = passwordInput.type === "password";
-
-        passwordInput.type = isPassword ? "text" : "password";
-
-        eyeIcon.textContent = isPassword
-            ? "visibility"
-            : "visibility_off";
+            passwordInput.type = isPassword ? "text" : "password";
+            eyeIcon.textContent = isPassword ? "visibility" : "visibility_off";
+        });
     });
-
-});
-</script>
+    </script>
 
 </body>
 </html>

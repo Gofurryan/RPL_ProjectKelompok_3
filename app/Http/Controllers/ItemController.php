@@ -63,7 +63,7 @@ class ItemController extends Controller
             $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('public/items', $filename);
-            $data['image'] = $filename;
+            $data['image'] = $request->file('image')->store('items', 'public');
         }
 
         $data['item_code'] = $this->generateItemCode();
@@ -129,13 +129,29 @@ class ItemController extends Controller
         return redirect()->route('items.index')->with('success', 'Data barang berhasil diperbarui!');
     }
 
-    public function destroy(Item $item)
+    public function destroy($id)
     {
-        $itemName = $item->name;
-        $item->delete();
-        \App\Models\ActivityLog::record("Menghapus inventaris: " . $itemName);
-        
-        return redirect()->route('items.index')->with('success', 'Barang berhasil dihapus dari sistem.');
+        $item = Item::findOrFail($id);
+
+        try {
+            // (Opsional) Jika kamu punya kode untuk menghapus file foto dari folder public/storage, taruh di sini
+            // if ($item->image) { Storage::delete($item->image); }
+
+            // Coba hapus data barang dari database
+            $item->delete();
+
+            return back()->with('success', 'Data barang beserta fotonya berhasil dihapus.');
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            
+            // Mengecek apakah errornya adalah Foreign Key Constraint (Kode 23000)
+            if ($e->getCode() == "23000") {
+                return back()->with('error', 'GAGAL: Barang ini tidak bisa dihapus karena masih terikat dengan riwayat peminjaman warga. Jika sudah rusak/hilang, silakan edit statusnya menjadi "Tidak Tersedia".');
+            }
+
+            // Jika ada error database lainnya
+            return back()->with('error', 'Terjadi kesalahan sistem saat menghapus data.');
+        }
     }
 
     public function export(Request $request)
