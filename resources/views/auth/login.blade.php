@@ -1,151 +1,153 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk - Inventaris Ibadah</title>
 
+    <!-- Memanggil Tailwind CSS dari Laravel Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        
-        /* Animasi pergerakan lambat untuk Blobs */
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 10s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
-    </style>
+    <!-- Memanggil Alpine.js untuk Animasi -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-slate-50 antialiased text-slate-800 min-h-screen flex flex-col justify-center items-center relative py-10 px-4 overflow-hidden">
+<body class="font-sans antialiased text-gray-900 bg-[#f3f8f9]">
 
-    <!-- Blobs Dekoratif Latar Belakang -->
-    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#11d4d4]/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none z-0"></div>
-    <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-blue-300/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none z-0"></div>
-    <div class="absolute -bottom-32 left-[20%] w-96 h-96 bg-emerald-200/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000 pointer-events-none z-0"></div>
+<!-- State awal -->
+<div x-data="{ isSignUp: {{ $errors->has('register') || $errors->has('name') ? 'true' : 'false' }} }"
+     class="relative flex items-center justify-center min-h-screen overflow-hidden">
 
-    <div class="w-full max-w-[420px] bg-[#fdfdfd] rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-300/50 border border-white z-10 relative">
-        
-        <div class="w-16 h-16 bg-[#11d4d4]/10 rounded-full flex items-center justify-center mx-auto mb-5">
-            <div class="flex gap-1.5 items-center">
-                <div class="w-2.5 h-6 bg-[#11d4d4] rounded-full"></div>
-                <div class="w-2.5 h-8 bg-[#11d4d4] rounded-full -translate-y-1"></div>
-                <div class="w-2.5 h-6 bg-[#11d4d4] rounded-full"></div>
+    <div class="absolute bottom-8 left-8 flex items-center gap-2 text-xs font-bold tracking-widest text-emerald-500 z-0">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> SISTEM AKTIF
+    </div>
+    <div class="absolute bottom-8 right-8 text-xs font-bold tracking-widest text-gray-400 z-0">
+        V1.0.0 &bull; 2026
+    </div>
+
+    <!-- Container Utama -->
+    <div class="relative w-full max-w-4xl h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden flex z-10">
+
+        <!-- ============================== -->
+        <!-- FORM LOGIN (Kiri)              -->
+        <!-- BUMBU 1: scale-95 ke scale-100 & custom ease -->
+        <!-- ============================== -->
+        <div class="absolute top-0 left-0 w-1/2 h-full bg-white transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu z-10"
+             :class="isSignUp ? 'translate-x-full opacity-0 scale-90 pointer-events-none' : 'translate-x-0 opacity-100 scale-100 pointer-events-auto'">
+            <div class="flex flex-col items-center justify-center h-full px-12 text-center transition-transform duration-[800ms] delay-100 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                 :class="isSignUp ? '-translate-y-4' : 'translate-y-0'">
+
+                <div class="flex gap-1 mb-4">
+                    <span class="w-2 h-6 bg-cyan-400 rounded-full"></span>
+                    <span class="w-2 h-8 bg-cyan-400 rounded-full"></span>
+                    <span class="w-2 h-6 bg-cyan-400 rounded-full"></span>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Inventaris Ibadah</h2>
+                <p class="text-sm text-gray-500 mb-8">Sistem Manajemen Inventaris Tempat Ibadah</p>
+
+                <form method="POST" action="{{ route('login') }}" class="w-full">
+                    @csrf
+                    <div class="mb-4 text-left">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                        <input type="email" name="email" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400 transition-all" placeholder="admin@example.com" required>
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                    </div>
+
+                    <div class="mb-4 text-left">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-semibold text-gray-700">Kata Sandi</label>
+                        </div>
+                        <input type="password" name="password" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400 transition-all" required>
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+
+                    <div class="flex items-center justify-between mb-6">
+                        <label class="flex items-center">
+                            <input id="remember_me" type="checkbox" class="w-4 h-4 text-cyan-500 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500" name="remember">
+                            <span class="ml-2 text-sm text-gray-600">Ingat Saya</span>
+                        </label>
+                        @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="text-xs text-cyan-500 font-semibold hover:underline">Lupa sandi?</a>
+                        @endif
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-cyan-400 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-200 hover:-translate-y-1 hover:shadow-cyan-300">
+                        Masuk
+                    </button>
+                </form>
             </div>
         </div>
 
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight mb-1">Inventaris Ibadah</h1>
-            <p class="text-[13px] text-slate-500 font-medium">Sistem Manajemen Inventaris Tempat Ibadah</p>
+        <!-- ============================== -->
+        <!-- FORM REGISTER (Kanan -> Kiri)  -->
+        <!-- ============================== -->
+        <div class="absolute top-0 left-0 w-1/2 h-full bg-white transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu z-0"
+             :class="isSignUp ? 'translate-x-full opacity-100 scale-100 z-20 pointer-events-auto' : 'translate-x-full opacity-0 scale-90 pointer-events-none'">
+            <div class="flex flex-col items-center justify-center h-full px-12 text-center transition-transform duration-[800ms] delay-100 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                 :class="isSignUp ? 'translate-y-0' : 'translate-y-4'">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Buat Akun</h2>
+
+                <form method="POST" action="{{ route('register') }}" class="w-full">
+                    @csrf
+                    <div class="mb-3 text-left">
+                        <input type="text" name="name" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400" placeholder="Nama Lengkap" required>
+                        <x-input-error :messages="$errors->get('name')" class="mt-1" />
+                    </div>
+                    <div class="mb-3 text-left">
+                        <input type="email" name="email" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400" placeholder="Email" required>
+                        <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                    </div>
+                    <div class="mb-3 text-left">
+                        <input type="password" name="password" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400" placeholder="Kata Sandi" required>
+                        <x-input-error :messages="$errors->get('password')" class="mt-1" />
+                    </div>
+                    <div class="mb-6 text-left">
+                        <input type="password" name="password_confirmation" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-cyan-400 focus:border-cyan-400" placeholder="Konfirmasi Kata Sandi" required>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-cyan-400 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-200 hover:-translate-y-1 hover:shadow-cyan-300">
+                        Daftar Sekarang
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <x-auth-session-status class="mb-4 text-sm font-bold text-emerald-600 text-center" :status="session('status')" />
+        <!-- ============================== -->
+        <!-- SLIDING OVERLAY PANEL          -->
+        <!-- BUMBU 2: Custom bezier untuk efek "glide" -->
+        <!-- ============================== -->
+        <div class="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu z-30"
+             :class="isSignUp ? '-translate-x-full' : 'translate-x-0'">
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
+            <div class="bg-gradient-to-br from-cyan-400 to-teal-500 text-white relative left-[-100%] h-full w-[200%] transition-transform duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu"
+                 :class="isSignUp ? 'translate-x-1/2' : 'translate-x-0'">
 
-            <div class="mb-5">
-                <label for="email" class="block text-xs font-black text-slate-700 mb-2">Email atau Username</label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">person</span>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
-                        class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all outline-none placeholder:text-slate-400" 
-                        placeholder="nama@domain.com">
-                </div>
-                <x-input-error :messages="$errors->get('email')" class="mt-2 text-xs font-bold text-rose-500" />
-            </div>
-
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-2">
-                    <label for="password" class="text-xs font-black text-slate-700">
-                        Kata Sandi
-                    </label>
-
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}"
-                           class="text-xs font-bold text-[#11d4d4] hover:text-[#0eb8b8] transition-colors">
-                            Lupa kata sandi?
-                        </a>
-                    @endif
-                </div>
-
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[20px] pointer-events-none">
-                        lock
-                    </span>
-
-                    <input
-                        id="password"
-                        type="password"
-                        name="password"
-                        required
-                        autocomplete="current-password"
-                        class="w-full pl-11 pr-12 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-[#11d4d4]/50 focus:border-[#11d4d4] transition-all outline-none placeholder:text-slate-400"
-                        placeholder="••••••••"
-                    >
-
-                    <button
-                        type="button"
-                        id="togglePassword"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#11d4d4] transition-colors z-20"
-                    >
-                        <span id="eyeIcon" class="material-symbols-outlined text-[20px]">
-                            visibility_off
-                        </span>
+                <!-- Overlay Kiri -->
+                <div class="absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center px-12 text-center transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu"
+                     :class="isSignUp ? 'translate-x-0 opacity-100 scale-100' : '-translate-x-[20%] opacity-0 scale-95'">
+                    <h2 class="text-3xl font-bold mb-4 text-white">Selamat Datang!</h2>
+                    <p class="mb-8 text-cyan-50 leading-relaxed">Sudah punya akun? Silakan masuk untuk mengakses dashboard inventaris dan mulai mengelola.</p>
+                    <!-- Efek Hover Tombol -->
+                    <button @click="isSignUp = false" type="button" class="border-2 border-white text-white px-10 py-2.5 rounded-full font-bold transition-all duration-300 hover:bg-white hover:text-cyan-500 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                        Masuk
                     </button>
                 </div>
 
-                <x-input-error :messages="$errors->get('password')" class="mt-2 text-xs font-bold text-rose-500" />
+                <!-- Overlay Kanan -->
+                <div class="absolute top-0 right-0 w-1/2 h-full flex flex-col items-center justify-center px-12 text-center transition-all duration-[800ms] ease-[cubic-bezier(0.25,1,0.5,1)] transform-gpu"
+                     :class="isSignUp ? 'translate-x-[20%] opacity-0 scale-95' : 'translate-x-0 opacity-100 scale-100'">
+                    <h2 class="text-3xl font-bold mb-4 text-white">Halo, Kawan!</h2>
+                    <p class="mb-8 text-cyan-50 leading-relaxed">Belum punya akun? Daftarkan diri Anda sekarang untuk mulai meminjam dan mendata barang.</p>
+                    <!-- Efek Hover Tombol -->
+                    <button @click="isSignUp = true" type="button" class="border-2 border-white text-white px-10 py-2.5 rounded-full font-bold transition-all duration-300 hover:bg-white hover:text-cyan-500 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
+                        Daftar
+                    </button>
+                </div>
+
             </div>
-
-            <div class="flex items-center mb-8">
-                <input id="remember_me" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-[#11d4d4] focus:ring-[#11d4d4] focus:ring-offset-0 bg-white" name="remember">
-                <label for="remember_me" class="ml-2.5 text-sm font-medium text-slate-500 select-none cursor-pointer">Ingat Saya</label>
-            </div>
-
-            <button type="submit" class="w-full bg-[#11d4d4] text-white font-black text-sm py-3.5 rounded-2xl shadow-lg shadow-[#11d4d4]/30 hover:bg-[#0eb8b8] hover:shadow-xl hover:shadow-[#11d4d4]/40 active:scale-[0.98] transition-all flex justify-center items-center gap-2">
-                Masuk <span class="material-symbols-outlined text-[20px]">login</span>
-            </button>
-        </form>
-
-        <div class="mt-8 pt-6 border-t border-slate-100 text-center">
-            <p class="text-sm font-medium text-slate-500">
-                Belum punya akun? 
-                <a href="{{ route('register') }}" class="text-[#11d4d4] font-bold hover:text-[#0eb8b8] transition-colors ml-1">Daftar di sini</a>
-            </p>
         </div>
+
     </div>
-
-    <div class="w-full max-w-[420px] flex justify-between items-center mt-6 text-slate-400 px-2 relative z-10">
-        <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400/50"></span>
-            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Sistem Aktif</span>
-        </div>
-        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">v1.0.0 • © {{ date('Y') }}</span>
-    </div>
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const passwordInput = document.getElementById("password");
-        const toggleBtn = document.getElementById("togglePassword");
-        const eyeIcon = document.getElementById("eyeIcon");
-
-        toggleBtn.addEventListener("click", function () {
-            const isPassword = passwordInput.type === "password";
-
-            passwordInput.type = isPassword ? "text" : "password";
-            eyeIcon.textContent = isPassword ? "visibility" : "visibility_off";
-        });
-    });
-    </script>
-
+</div>
 </body>
 </html>
