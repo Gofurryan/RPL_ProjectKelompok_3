@@ -31,24 +31,24 @@ Route::get('/dashboard', function () {
 
 // --- 2. RUTE KHUSUS PETUGAS/ADMIN ---
 Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
-    
+
     // Dashboard Admin (Memanggil DashboardController)
     Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    
+
     // Manajemen Warga (Baru Ditambahkan)
     Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    
+
     // Kelola Peminjaman (Booking) & Pengembalian
     Route::get('/admin/loans', [\App\Http\Controllers\LoanController::class, 'adminIndex'])->name('admin.loans.index');
     Route::put('/admin/loans/{id}/approve', [\App\Http\Controllers\LoanController::class, 'approve'])->name('admin.loans.approve');
     Route::put('/admin/loans/{id}/reject', [\App\Http\Controllers\LoanController::class, 'reject'])->name('admin.loans.reject');
     Route::put('/admin/loans/{id}/return', [\App\Http\Controllers\LoanController::class, 'returnItem'])->name('admin.loans.return');
     Route::put('/admin/loans/{id}/handover', [\App\Http\Controllers\LoanController::class, 'handover'])->name('admin.loans.handover');
-    
+
     // Kelola Denda & Laporan
     Route::put('/admin/penalties/{id}/pay', [\App\Http\Controllers\LoanController::class, 'payPenalty'])->name('admin.penalties.pay');
     Route::get('/admin/reports/penalties', [\App\Http\Controllers\LoanController::class, 'penaltyReport'])->name('admin.reports.penalties');
-    
+
     // Export Data Barang
     Route::get('/admin/items/export', [\App\Http\Controllers\ItemController::class, 'export'])->name('items.export');
 });
@@ -59,14 +59,14 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
 
 // --- 3. RUTE KHUSUS WARGA ---
 Route::middleware(['auth', 'verified', 'role:warga'])->group(function () {
-    
+
     // 1. Halaman Beranda Warga
     Route::get('/warga/dashboard', [\App\Http\Controllers\LoanController::class, 'dashboardWarga'])->name('warga.dashboard');
 
     // 2. Halaman Form Pengajuan
     Route::get('/warga/booking', [\App\Http\Controllers\LoanController::class, 'createWarga'])->name('warga.booking.create');
     Route::post('/warga/booking', [\App\Http\Controllers\LoanController::class, 'store'])->name('warga.booking.store');
-    
+
     // 3. Halaman Riwayat Peminjaman
     Route::get('/warga/history', [\App\Http\Controllers\LoanController::class, 'historyWarga'])->name('warga.history');
 
